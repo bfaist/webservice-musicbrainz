@@ -148,7 +148,7 @@ sub _validate_params {
       my $valid = 0;
 
       my @new_terms;
-      foreach my $term (split /\s/, $params->{$key}) {
+      foreach my $term (split /[\s\+,]/, $params->{$key}) {
           push @new_terms, URI::Escape::uri_escape($term);
       }
 
