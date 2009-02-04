@@ -3,7 +3,7 @@ package WebService::MusicBrainz::Response;
 use strict;
 use XML::LibXML;
 
-our $VERSION = '0.20';
+our $VERSION = '0.21';
 
 =head1 NAME
 
@@ -519,7 +519,8 @@ sub _create_track_list {
 }
 
 sub _create_alias {
-   my $xAlias = shift;
+   my $self = shift;
+   my ($xAlias) = @_;
 
    require WebService::MusicBrainz::Response::Alias;
 
@@ -548,7 +549,7 @@ sub _create_alias_list {
    my @aliases;
 
    foreach my $xAlias ($xpc->findnodes('mmd:alias', $xAliasList)) {
-       my $alias = _create_alias($xAlias);
+       my $alias = $self->_create_alias($xAlias);
 
        push @aliases, $alias if defined($alias);
    }
@@ -787,7 +788,7 @@ sub _create_tag_list {
    my @tags;
 
    foreach my $xTag ($xpc->findnodes('mmd:tag', $xTagList)) {
-       my $tag = _create_tag( $xTag );
+       my $tag = $self->_create_tag( $xTag );
        push @tags, $tag;
    }
 

@@ -1,0 +1,4 @@
+do{ my $x = {
+       'WebService-MusicBrainz-0.21' => 1
+     };
+$x; }

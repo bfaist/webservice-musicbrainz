@@ -3,7 +3,7 @@ package WebService::MusicBrainz::Label;
 use strict;
 use WebService::MusicBrainz::Query;
 
-our $VERSION = '0.20';
+our $VERSION = '0.21';
 
 =head1 NAME
 

@@ -84,3 +84,12 @@ Revision history for Perl extension WebService::MusicBrainz.
 	- RT Bug 42169 - pbryan
 	    - Fixed PUID object creation
             - Added test cases for PUID objects to Track.t
+
+0.21 Mon Feb 2nd 2009
+	- RT Bug 42482 - orivej
+            - Changed URI creation for multiple INC params
+	- RT Bug 42534 - Chris Key
+	    - Applied patch to fix tag and alias parsing
+	- fixed failing test in Artist.t
+        - Added documentation about multiple INC params
+        - Added test case to Artist.t for multiple INC params

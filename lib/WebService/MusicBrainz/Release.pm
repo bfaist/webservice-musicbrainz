@@ -3,7 +3,7 @@ package WebService::MusicBrainz::Release;
 use strict;
 use WebService::MusicBrainz::Query;
 
-our $VERSION = '0.20';
+our $VERSION = '0.21';
 
 =head1 NAME
 
@@ -89,6 +89,12 @@ to define the search parameters.
     my $response = $ws->search({ MBID => 'fed37cfc-2a6d-4569-9ac0-501a7c7598eb', INC => 'release-rels' });
     my $response = $ws->search({ MBID => 'fed37cfc-2a6d-4569-9ac0-501a7c7598eb', INC => 'track-rels' });
     my $response = $ws->search({ MBID => 'fed37cfc-2a6d-4569-9ac0-501a7c7598eb', INC => 'url-rels' });
+
+Multiple INC params can be delimited by whitespace, commas, or + characters.
+
+    my $response = $ws->search({ MBID => 'fed37cfc-2a6d-4569-9ac0-501a7c7598eb', INC => 'artist url-rels' });
+    my $response = $ws->search({ MBID => 'fed37cfc-2a6d-4569-9ac0-501a7c7598eb', INC => 'artist,url-rels' });
+    my $response = $ws->search({ MBID => 'fed37cfc-2a6d-4569-9ac0-501a7c7598eb', INC => 'artist+url-rels' });
 
 =cut
 

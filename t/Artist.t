@@ -5,7 +5,7 @@
 
 # change 'tests => 1' to 'tests => last_test_to_print';
 
-use Test::More tests => 60;
+use Test::More tests => 61;
 BEGIN { use_ok('WebService::MusicBrainz::Artist') };
 
 #########################
@@ -206,7 +206,7 @@ ok( $offset_artist_search );
 my $offset_artist_list = $offset_artist_search->artist_list();
 
 ok( $offset_artist_list->offset() eq "3" );
-ok( $offset_artist_list->count() eq "8" );
+ok( $offset_artist_list->count() eq "9" );
 
 foreach my $artist (@{ $offset_artist_list->artists() }) {
    if($artist->id() eq "4c3d0136-9235-4c50-b136-be49d17163df") {
@@ -219,3 +219,6 @@ ok( $utf8_artist_test );
 
 my $utf8_artist_list = $utf8_artist_test->artist_list();
 ok( $utf8_artist_list );
+
+my $search_multi_inc = $ws->search({ MBID => '070d193a-845c-479f-980e-bef15710653e', INC => 'aliases artist-rels' });
+ok( $search_multi_inc, 'get INC multi params' );
