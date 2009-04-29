@@ -93,3 +93,10 @@ Revision history for Perl extension WebService::MusicBrainz.
 	- fixed failing test in Artist.t
         - Added documentation about multiple INC params
         - Added test case to Artist.t for multiple INC params
+
+0.22 Sat Apr 25th 2009
+	- RT Bug 44065 - Chris Key
+            - Added new API "relation_lists" to Release response object
+            - API method "relation_list" returns first relation list object
+            - New API method "relation_lists" returns array ref with all relation lists
+            - Added more tests to Release.t

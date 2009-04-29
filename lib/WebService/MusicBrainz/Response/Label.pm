@@ -3,7 +3,7 @@ package WebService::MusicBrainz::Response::Label;
 use strict;
 use base 'Class::Accessor';
 
-our $VERSION = '0.21';
+our $VERSION = '0.22';
 
 =head1 NAME
 
@@ -41,13 +41,15 @@ All the methods listed below are accessor methods.  They can take a scalar argum
 
 =head2 relation_list()
 
+=head2 relation_lists()
+
 =head2 tag_list()
 
 =head2 score()
 
 =cut
 
-__PACKAGE__->mk_accessors(qw/id type name sort_name label_code disambiguation country life_span_begin life_span_end alias_list release_list relation_list tag_list score/);
+__PACKAGE__->mk_accessors(qw/id type name sort_name label_code disambiguation country life_span_begin life_span_end alias_list release_list relation_list relation_lists tag_list score/);
 
 =head1 AUTHOR
 

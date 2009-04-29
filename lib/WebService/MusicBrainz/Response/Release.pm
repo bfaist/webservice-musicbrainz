@@ -3,7 +3,7 @@ package WebService::MusicBrainz::Response::Release;
 use strict;
 use base 'Class::Accessor';
 
-our $VERSION = '0.21';
+our $VERSION = '0.22';
 
 =head1 NAME
 
@@ -41,11 +41,13 @@ All the methods listed below are accessor methods.  They can take a scalar argum
 
 =head2 relation_list()
 
+=head2 relation_lists()
+
 =head2 score()
 
 =cut
 
-__PACKAGE__->mk_accessors(qw/id type title text_rep_language text_rep_script asin artist release_event_list disc_list puid_list track_list relation_list score/);
+__PACKAGE__->mk_accessors(qw/id type title text_rep_language text_rep_script asin artist release_event_list disc_list puid_list track_list relation_list relation_lists score/);
 
 =head1 AUTHOR
 

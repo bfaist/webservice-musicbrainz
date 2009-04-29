@@ -5,7 +5,7 @@
 
 # change 'tests => 1' to 'tests => last_test_to_print';
 
-use Test::More tests => 51;
+use Test::More tests => 58;
 BEGIN { use_ok('WebService::MusicBrainz::Release') };
 
 #########################
@@ -159,3 +159,15 @@ my $offset_release_list = $offset_release_search->release_list();
 ok( $offset_release_list->offset() eq "3", "49 - release list offset match" );
 ok( $offset_release_list->count() eq "10", "50 - release list count match" );
 ok( scalar(@{ $offset_release_list->releases() }) == 7, "51 - release list release count");
+
+my $multi_relation_list = $ws->search({ MBID => '88ef66e4-9490-4b11-9f40-422c6c065e87', INC => 'artist-rels,release-rels' });
+ok( $multi_relation_list );
+my $multi_relation_release = $multi_relation_list->release();
+ok( $multi_relation_release );
+my $first_relation_list = $multi_relation_release->relation_list();
+ok( $first_relation_list );
+ok( $first_relation_list->relations() );
+ok( $first_relation_list->relations()->[0]->type() eq "ArtDirection" );
+my $all_relations_list = $multi_relation_release->relation_lists();
+ok( $all_relations_list );
+ok( scalar(@$all_relations_list) > 0 );

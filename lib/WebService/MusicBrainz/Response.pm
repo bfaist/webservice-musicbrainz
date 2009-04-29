@@ -3,7 +3,7 @@ package WebService::MusicBrainz::Response;
 use strict;
 use XML::LibXML;
 
-our $VERSION = '0.21';
+our $VERSION = '0.22';
 
 =head1 NAME
 
@@ -309,7 +309,7 @@ sub _create_artist {
    my ($xDisambiguation) = $xpc->findnodes('mmd:disambiguation[1]', $xArtist);
    my ($xLifeSpan) = $xpc->findnodes('mmd:life-span[1]', $xArtist);
    my ($xAliasList) = $xpc->findnodes('mmd:alias-list[1]', $xArtist);
-   my ($xRelationList) = $xpc->findnodes('mmd:relation-list[1]', $xArtist);
+   my @xRelationList = $xpc->findnodes('mmd:relation-list', $xArtist);
    my ($xReleaseList) = $xpc->findnodes('mmd:release-list[1]', $xArtist);
    my ($xTagList) = $xpc->findnodes('mmd:tag-list[1]', $xArtist);
 
@@ -326,9 +326,12 @@ sub _create_artist {
    $artist->life_span_end( $xLifeSpan->getAttribute('end') ) if $xLifeSpan && $xLifeSpan->getAttribute('end');
    $artist->score( $xArtist->getAttribute('ext:score') ) if $xArtist->getAttribute('ext:score');
    $artist->alias_list( $self->_create_alias_list( $xAliasList ) ) if $xAliasList;
-   $artist->relation_list( $self->_create_relation_list( $xRelationList ) ) if $xRelationList;
    $artist->release_list( $self->_create_release_list( $xReleaseList ) ) if $xReleaseList;
    $artist->tag_list( $self->_create_tag_list( $xTagList ) ) if $xTagList;
+   my $relationLists = $self->_create_relation_lists( \@xRelationList );
+   # use Data::Dumper; die Dumper($relationLists);
+   $artist->relation_list( $relationLists->[0] ) if $relationLists;
+   $artist->relation_lists( $relationLists ) if $relationLists;
 
    return $artist;
 }
@@ -373,7 +376,7 @@ sub _create_release {
    my ($xDiscList) = $xpc->findnodes('mmd:disc-list[1]', $xRelease);
    my ($xPuidList) = $xpc->findnodes('mmd:puid-list[1]', $xRelease);
    my ($xTrackList) = $xpc->findnodes('mmd:track-list[1]', $xRelease);
-   my ($xRelationList) = $xpc->findnodes('mmd:relation-list[1]', $xRelease);
+   my @xRelationList = $xpc->findnodes('mmd:relation-list', $xRelease);
    my ($xTagList) = $xpc->findnodes('mmd:tag-list[1]', $xRelease);
 
    require WebService::MusicBrainz::Response::Release;
@@ -392,8 +395,11 @@ sub _create_release {
    $release->disc_list( $self->_create_disc_list( $xDiscList ) ) if $xDiscList;
    $release->puid_list( $self->_create_puid_list( $xPuidList ) ) if $xPuidList;
    $release->track_list( $self->_create_track_list( $xTrackList ) ) if $xTrackList;
-   $release->relation_list( $self->_create_relation_list( $xRelationList ) ) if $xRelationList;
    $release->tag_list( $self->_create_tag_list( $xTagList ) ) if $xTagList;
+
+   my $relationLists = $self->_create_relation_lists( \@xRelationList );
+   $release->relation_list( $relationLists->[0] ) if $relationLists;
+   $release->relation_lists( $relationLists ) if $relationLists;
 
    return $release;
 }
@@ -409,7 +415,7 @@ sub _create_track {
    my ($xArtist) = $xpc->findnodes('mmd:artist[1]', $xTrack);
    my ($xReleaseList) = $xpc->findnodes('mmd:release-list[1]', $xTrack);
    my ($xPuidList) = $xpc->findnodes('mmd:puid-list[1]', $xTrack);
-   my ($xRelationList) = $xpc->findnodes('mmd:relation-list[1]', $xTrack);
+   my @xRelationList = $xpc->findnodes('mmd:relation-list', $xTrack);
    my ($xTagList) = $xpc->findnodes('mmd:tag-list[1]', $xTrack);
 
    require WebService::MusicBrainz::Response::Track;
@@ -423,8 +429,11 @@ sub _create_track {
    $track->artist( $self->_create_artist( $xArtist ) ) if $xArtist;
    $track->release_list( $self->_create_release_list( $xReleaseList ) ) if $xReleaseList;
    $track->puid_list( $self->_create_puid_list( $xPuidList ) ) if $xPuidList;
-   $track->relation_list( $self->_create_relation_list( $xRelationList ) ) if $xRelationList;
    $track->tag_list( $self->_create_tag_list( $xTagList ) ) if $xTagList;
+
+   my $relationLists = $self->_create_relation_lists( \@xRelationList );
+   $track->relation_list( $relationLists->[0] ) if $relationLists;
+   $track->relation_lists( $relationLists ) if $relationLists;
 
    return $track;
 }
@@ -443,7 +452,7 @@ sub _create_label {
    my ($xLifeSpan) = $xpc->findnodes('mmd:life-span[1]', $xLabel);
    my ($xAliasList) = $xpc->findnodes('mmd:alias-list[1]', $xLabel);
    my ($xReleaseList) = $xpc->findnodes('mmd:release-list[1]', $xLabel);
-   my ($xRelationList) = $xpc->findnodes('mmd:relation-list[1]', $xLabel);
+   my @xRelationList = $xpc->findnodes('mmd:relation-list', $xLabel);
    my ($xTagList) = $xpc->findnodes('mmd:tag-list[1]', $xLabel);
 
    require WebService::MusicBrainz::Response::Label;
@@ -462,8 +471,11 @@ sub _create_label {
    $label->score( $xLabel->getAttribute('ext:score') ) if $xLabel->getAttribute('ext:score');
    $label->alias_list( $self->_create_alias_list( $xAliasList ) ) if $xAliasList;
    $label->release_list( $self->_create_release_list( $xReleaseList ) ) if $xReleaseList;
-   $label->relation_list( $self->_create_relation_list( $xRelationList ) ) if $xRelationList;
    $label->tag_list( $self->_create_tag_list( $xTagList ) ) if $xTagList;
+
+   my $relationLists = $self->_create_relation_lists( \@xRelationList );
+   $label->relation_list( $relationLists->[0] ) if $relationLists;
+   $label->relation_lists( $relationLists ) if $relationLists;
    
    return $label;
 }
@@ -585,6 +597,19 @@ sub _create_relation {
    $relation->track( $self->_create_track( $xTrack ) ) if $xTrack;
 
    return $relation;
+}
+
+sub _create_relation_lists {
+   my $self = shift;
+   my ($xRelationLists) = @_;
+
+   my @relation_lists;
+
+   if($xRelationLists && scalar(@{ $xRelationLists }) > 0) {
+       map { push @relation_lists, $self->_create_relation_list( $_ ) } @$xRelationLists;
+   }
+
+   return scalar(@relation_lists) > 0 ? \@relation_lists : undef;
 }
 
 sub _create_relation_list {

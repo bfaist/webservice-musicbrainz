@@ -3,7 +3,7 @@ package WebService::MusicBrainz::Response::TrackList;
 use strict;
 use base 'Class::Accessor';
 
-our $VERSION = '0.21';
+our $VERSION = '0.22';
 
 =head1 NAME
 
