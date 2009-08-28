@@ -45,11 +45,17 @@ All the methods listed below are accessor methods.  They can take a scalar argum
 
 =head2 tag_list()
 
+=head2 user_tag_list()
+
+=head2 rating()
+
+=head2 user_rating()
+
 =head2 score()
 
 =cut
 
-__PACKAGE__->mk_accessors(qw/id type name sort_name label_code disambiguation country life_span_begin life_span_end alias_list release_list relation_list relation_lists tag_list score/);
+__PACKAGE__->mk_accessors(qw/id type name sort_name label_code disambiguation country life_span_begin life_span_end alias_list release_list relation_list relation_lists tag_list user_tag_list rating user_rating score/);
 
 =head1 AUTHOR
 
@@ -61,7 +67,7 @@ __PACKAGE__->mk_accessors(qw/id type name sort_name label_code disambiguation co
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2006-2007 by Bob Faist
+Copyright 2006-2009 by Bob Faist
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

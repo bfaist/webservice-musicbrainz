@@ -25,6 +25,8 @@ All the methods listed below are accessor methods.  They can take a scalar argum
 
 =head2 release()
 
+=head2 release_group()
+
 =head2 track()
 
 =head2 artist_list()
@@ -37,7 +39,7 @@ All the methods listed below are accessor methods.  They can take a scalar argum
 
 =cut
 
-__PACKAGE__->mk_accessors(qw/generator created artist release track label artist_list release_list track_list label_list score/);
+__PACKAGE__->mk_accessors(qw/generator created artist release release_group track label artist_list release_list track_list label_list score/);
 
 =head1 AUTHOR
 
@@ -49,7 +51,7 @@ __PACKAGE__->mk_accessors(qw/generator created artist release track label artist
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2006-2007 by Bob Faist
+Copyright 2006-2009 by Bob Faist
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

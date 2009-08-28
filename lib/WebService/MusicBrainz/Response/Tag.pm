@@ -17,11 +17,13 @@ WebService::MusicBrainz::Response::Tag
 
 All the methods listed below are accessor methods.  They can take a scalar argument to set the state of the object or without and argument, they will return that state if it is available.
 
-=head2 uuid()
+=head2 count()
+
+=head2 text()
 
 =cut
 
-__PACKAGE__->mk_accessors(qw/count/);
+__PACKAGE__->mk_accessors(qw/text count/);
 
 =head1 AUTHOR
 
@@ -33,7 +35,7 @@ __PACKAGE__->mk_accessors(qw/count/);
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2006-2007 by Bob Faist
+Copyright 2006-2009 by Bob Faist
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

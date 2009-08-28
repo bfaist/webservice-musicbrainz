@@ -54,7 +54,7 @@ sub _init {
    my $q = WebService::MusicBrainz::Query->new(@_);
 
    $q->set_url_params(qw/mbid name limit offset/);
-   $q->set_inc_params(qw/aliases artist-rels release-rels track-rels url-rels sa- va-/);
+   $q->set_inc_params(qw/aliases release-groups artist-rels release-rels track-rels url-rels sa- va- label-rels tags ratings user-tags user-ratings counts release-events discs labels/);
 
    $self->{_query} = $q;
 }
@@ -115,7 +115,7 @@ sub search {
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2006-2007 by Bob Faist
+Copyright 2006-2009 by Bob Faist
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
