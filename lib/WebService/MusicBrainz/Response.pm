@@ -315,6 +315,7 @@ sub _create_artist {
    my ($xReleaseList) = $xpc->findnodes('mmd:release-list[1]', $xArtist);
    my ($xTagList) = $xpc->findnodes('mmd:tag-list[1]', $xArtist);
    my ($xReleaseGroupList) = $xpc->findnodes('mmd:release-group-list[1]', $xArtist);
+   my ($xRating) = $xpc->findnodes('mmd:rating[1]', $xArtist);
 
    require WebService::MusicBrainz::Response::Artist;
 
@@ -335,6 +336,7 @@ sub _create_artist {
    $artist->relation_list( $relationLists->[0] ) if $relationLists;
    $artist->relation_lists( $relationLists ) if $relationLists;
    $artist->release_group_list( $self->_create_release_group_list( $xReleaseGroupList ) ) if $xReleaseGroupList;
+   $artist->rating( $self->_create_rating( $xRating ) ) if $xRating;
 
    return $artist;
 }
@@ -798,6 +800,8 @@ sub _create_tag {
    my $tag = WebService::MusicBrainz::Response::Tag->new();
 
    $tag->id( $xTag->getAttribute('id') ) if $xTag->getAttribute('id');
+   $tag->count( $xTag->getAttribute('count') ) if $xTag->getAttribute('count');
+   $tag->text( $xTag->textContent() ) if $xTag->textContent();
 
    return $tag;
 }
@@ -915,6 +919,20 @@ sub _create_release_group_list {
    $rel_group_list->release_groups( \@rel_groups );
 
    return $rel_group_list;
+}
+
+sub _create_rating {
+   my $self = shift;
+   my ($xRating) = @_;
+
+   require WebService::MusicBrainz::Response::Rating;
+
+   my $rating = WebService::MusicBrainz::Response::Rating->new();
+
+   $rating->votes_count( $xRating->getAttribute('votes-count') ) if $xRating->getAttribute('votes-count');
+   $rating->value( $xRating->textContent() ) if $xRating->textContent();
+
+   return $rating;
 }
 
 =head1 AUTHOR

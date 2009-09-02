@@ -127,28 +127,98 @@ foreach my $relation (@{ $mbid_artist_rels_list->relations() }) {
 
 sleep($sleep_duration);
 
+# TODO: Find MBID that works
 my $mbid_label_rels_response = $ws->search({ MBID => '65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab', INC => 'label-rels' });
 ok( $mbid_label_rels_response, 'artist by MBID LABEL-RELS' );
 
 my $mbid_release_rels_response = $ws->search({ MBID => '65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab', INC => 'release-rels' });
 ok( $mbid_release_rels_response, 'artist by MBID RELEASE-RELS' );
+my $mbid_release_rels_artist = $mbid_release_rels_response->artist();
+ok( $mbid_release_rels_artist, 'artist release rels ARTIST');
+ok( $mbid_release_rels_artist->name() eq "Metallica", 'artist release rels artist NAME');
+ok( $mbid_release_rels_artist->sort_name() eq "Metallica", 'artist release rels artist SORT NAME');
+ok( $mbid_release_rels_artist->life_span_begin() eq "1981-10", 'artist release rels artist BEGIN');
+my $mbid_release_rels_list = $mbid_release_rels_artist->relation_list();
+ok( $mbid_release_rels_list, 'artist release rels RELATION LIST');
+ok( $mbid_release_rels_list->target_type() eq "Release", 'artist release rels RELATION LIST');
+ok( scalar(@{ $mbid_release_rels_list->relations() }) > 0, 'artist release rels RELEASES');
+foreach my $relation (@{ $mbid_release_rels_list->relations() }) {
+    if($relation->target() eq "552c4163-397e-4ae3-8da5-8f551ebbdbc1") {
+        ok( $relation->type() eq "Tribute", 'artist release rels relation TYPE');
+        ok( $relation->release()->type() eq "EP Official", 'artist release rels relation release TYPE');
+        ok( $relation->release()->title() eq "A Tribute to Metallica", 'artist release rels relation release TITLE');
+        ok( $relation->release()->text_rep_language() eq "ENG", 'artist release rels relation release LANG');
+        ok( $relation->release()->text_rep_script() eq "Latn", 'artist release rels relation release SCRIPT');
+        last;
+    }
+}
 
 sleep($sleep_duration);
 
 my $mbid_track_rels_response = $ws->search({ MBID => '65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab', INC => 'track-rels' });
 ok( $mbid_track_rels_response, 'artist by MBID TRACK-RELS' );
+my $mbid_track_rels_artist = $mbid_track_rels_response->artist();
+ok( $mbid_track_rels_artist, 'artist track rels ARTIST' );
+ok( $mbid_track_rels_artist->name() eq "Metallica", 'artist track rels artist NAME');
+ok( $mbid_track_rels_artist->sort_name() eq "Metallica", 'artist track rels artist SORT NAME');
+my $mbid_track_rels_list = $mbid_track_rels_artist->relation_list();
+ok( $mbid_track_rels_list, 'artist track rels artist RELATION LIST' );
+ok( $mbid_track_rels_list->target_type() eq "Track", 'artist track rels artist relation list TYPE');
+ok( scalar(@{ $mbid_track_rels_list->relations() }) > 0, 'artist track rels artist relation list RELATIONS');
+foreach my $track_rel (@{ $mbid_track_rels_list->relations() }) {
+    if($track_rel->target() eq "f415a50d-4594-4d39-b84d-57afd433ef6d") {
+        ok( $track_rel->type() eq "Performer", 'artist track rels relation TYPE');
+        ok( $track_rel->track()->title() eq "Halloween (feat. Metallica)", 'artist track rels relation track TITLE');
+        ok( $track_rel->track()->duration() eq "174200", 'artist track rels relation track DURATION');
+        last;
+    }
+}
 
 my $mbid_url_rels_response = $ws->search({ MBID => 'ae1b47d5-5128-431c-9d30-e08fd90e0767', INC => 'url-rels' });
 ok( $mbid_url_rels_response, 'artist by MBID URL-RELS' );
+my $mbid_url_rels_artist = $mbid_url_rels_response->artist();
+ok( $mbid_url_rels_artist, 'artist url rels ARTIST');
+ok( $mbid_url_rels_artist->name() eq "Coheed and Cambria", 'artist url rels artist NAME');
+ok( $mbid_url_rels_artist->sort_name() eq "Coheed and Cambria", 'artist url rels artist SORT NAME');
+my $mbid_url_rels_list = $mbid_url_rels_artist->relation_list();
+ok( $mbid_url_rels_list, 'artist url rels artist RELATION LIST');
+ok( $mbid_url_rels_list->target_type() eq "Url", 'artist url rels artist relation list TYPE');
+foreach my $url_rel (@{ $mbid_url_rels_list->relations() }) {
+    if($url_rel->type() eq "Wikipedia") { 
+        ok($url_rel->target() eq "http://en.wikipedia.org/wiki/Coheed_and_Cambria", 'artist url rels relation URL TYPE');
+        last;
+    }
+}
 
 sleep($sleep_duration);
 
 my $mbid_tags_response = $ws->search({ MBID => '65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab', INC => 'tags' });
 ok( $mbid_tags_response, 'artist by MBID TAGS' );
+my $mbid_tags_artist = $mbid_tags_response->artist();
+ok( $mbid_tags_artist, 'artist tags ARTIST');
+ok( $mbid_tags_artist->name() eq "Metallica", 'artist tags artist NAME');
+ok( $mbid_tags_artist->sort_name() eq "Metallica", 'artist tags artist SORT NAME');
+my $mbid_tags_tag_list = $mbid_tags_artist->tag_list();
+ok( $mbid_tags_tag_list, 'artist tags artist TAGLIST');
+foreach my $tag (@{ $mbid_tags_tag_list->tags() }) {
+    if($tag->text() eq "heavy metal") {
+        ok($tag->count() > 2, 'artist tags tag COUNT2');
+    }
+}
 
 my $mbid_ratings_response = $ws->search({ MBID => '65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab', INC => 'ratings' });
 ok( $mbid_ratings_response, 'artist by MBID RATINGS' );
+my $mbid_ratings_artist = $mbid_ratings_response->artist();
+ok( $mbid_ratings_artist, 'artist ratings ARTIST');
+ok( $mbid_ratings_artist->name() eq "Metallica", 'artist ratings artist NAME');
+ok( $mbid_ratings_artist->sort_name() eq "Metallica", 'artist ratings artist SORT NAME');
+my $mbid_ratings_rating = $mbid_ratings_artist->rating();
+ok( $mbid_ratings_rating, 'artist ratings RATING');
+ok( $mbid_ratings_rating->votes_count() > 20, 'artist ratings rating VOTE COUNT');
+ok( $mbid_ratings_rating->value() > 3 , 'artist ratings rating VALUE');
 
+
+# TODO: requires auth/credentials
 # my $mbid_user_tags_response = $ws->search({ MBID => '65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab', INC => 'user-tags' });
 # ok( $mbid_user_tags_response, 'artist by MBID USERs-TAGS' );
 # 
