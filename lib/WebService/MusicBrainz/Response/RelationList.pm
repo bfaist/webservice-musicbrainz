@@ -19,6 +19,8 @@ All the methods listed below are accessor methods.  They can take a scalar argum
 
 =head2 relations()
 
+=head2 target-type()
+
 =head2 count()
 
 =head2 offset()

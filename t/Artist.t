@@ -127,9 +127,30 @@ foreach my $relation (@{ $mbid_artist_rels_list->relations() }) {
 
 sleep($sleep_duration);
 
-# TODO: Find MBID that works
-my $mbid_label_rels_response = $ws->search({ MBID => '65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab', INC => 'label-rels' });
+my $mbid_label_rels_response = $ws->search({ MBID => '65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab', INC => 'label-rels+sa-Official' });
 ok( $mbid_label_rels_response, 'artist by MBID LABEL-RELS' );
+my $mbid_label_rels_artist = $mbid_label_rels_response->artist();
+ok( $mbid_label_rels_artist,'artist label rels ARTIST');
+my $mbid_label_rels_release_list = $mbid_label_rels_artist->release_list();
+ok( $mbid_label_rels_release_list, 'artist label_rels RELEASE LIST');
+foreach my $release (@{ $mbid_label_rels_release_list->releases() }) {
+    if($release->id() eq "940d6fba-3603-4ac2-8f5d-ea0a11e51765") {
+        ok($release->type() eq "Album Official",'artist label rels release TYPE');
+        my $relation_list = $release->relation_list();
+        ok($relation_list->target_type() eq "Label", 'artist label-rels release relation_list TYPE');
+        foreach my $relation (@{ $relation_list->relations() }) {
+           if($relation->target() eq "82275f26-c259-4a3e-a476-91277f1d0c3d") {
+               ok($relation->type() eq "Publishing", 'artist label-rels relation TYPE');
+               ok($relation->label(), 'artist label-res relation LABEL');
+               ok($relation->label()->name() eq "Creeping Death Music", 'artist label-rels label NAME');
+               ok($relation->label()->sort_name() eq "Creeping Death Music", 'artist label-rels label SORT NAME');
+               ok($relation->label()->country() eq "US", 'artist label-rels label COUNTRY');
+               last;
+           }
+        }
+        last;
+    }
+}
 
 my $mbid_release_rels_response = $ws->search({ MBID => '65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab', INC => 'release-rels' });
 ok( $mbid_release_rels_response, 'artist by MBID RELEASE-RELS' );
@@ -227,17 +248,37 @@ ok( $mbid_ratings_rating->value() > 3 , 'artist ratings rating VALUE');
 
 sleep($sleep_duration);
 
-my $mbid_counts_response = $ws->search({ MBID => '65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab', INC => 'counts' });
+my $mbid_counts_response = $ws->search({ MBID => '65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab', INC => 'counts+sa-Official' });
 ok( $mbid_counts_response, 'artist by MBID COUNTS' );
+my $mbid_counts_artist = $mbid_counts_response->artist();
+ok( $mbid_counts_artist, 'artist counts ARTIST');
+my $mbid_counts_rel_list = $mbid_counts_artist->release_list();
+ok( $mbid_counts_rel_list, 'artist counts artist RELEASE LIST');
+foreach my $release (@{ $mbid_counts_rel_list->releases() }) {
+    if($release->id() eq "a89e1d92-5381-4dab-ba51-733137d0e431") {
+        ok( $release->type() eq "Album Official", 'artist counts release TYPE');
+        ok( $release->title() eq "Kill 'em All", 'artist counts release TITLE');
+        ok( $release->text_rep_language() eq "ENG", 'artist counts release TEXT LANG');
+        ok( $release->text_rep_script() eq "Latn", 'artist counts release TEXT SCRIPT');
+        ok( $release->asin() eq "B00000B9AN", 'artist counts release ASIN');
+        ok( $release->release_info_list()->count() > 15, 'artist counts release info list COUNT');
+        ok( $release->disc_list()->count() > 10, 'artist counts release DISC LIST COUNT');
+        ok( $release->track_list()->count() > 8, 'artist counts release TRACK LIST COUNT');
+        last;
+    }
+}
 
+# TODO:  need working MBID
 my $mbid_rel_events_response = $ws->search({ MBID => '65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab', INC => 'release-events' });
 ok( $mbid_rel_events_response, 'artist by MBID RELEASE-EVENTS' );
 
 sleep($sleep_duration);
 
+# TODO:  need working MBID
 my $mbid_discs_response = $ws->search({ MBID => '65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab', INC => 'discs' });
 ok( $mbid_discs_response, 'artist by MBID DISCS' );
 
+# TODO:  need working MBID
 my $mbid_labels_response = $ws->search({ MBID => '65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab', INC => 'labels' });
 ok( $mbid_labels_response, 'artist by MBID LABELS' );
 

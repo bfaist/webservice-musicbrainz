@@ -1,4 +1,4 @@
-package WebService::MusicBrainz::Response::Relation;
+package WebService::MusicBrainz::Response::ReleaseInfoList;
 
 use strict;
 use base 'Class::Accessor';
@@ -7,7 +7,7 @@ our $VERSION = '0.22';
 
 =head1 NAME
 
-WebService::MusicBrainz::Response::Relation
+WebService::MusicBrainz::Response::ReleaseInfoList
 
 =head1 SYNOPSIS
 
@@ -17,29 +17,11 @@ WebService::MusicBrainz::Response::Relation
 
 All the methods listed below are accessor methods.  They can take a scalar argument to set the state of the object or without and argument, they will return that state if it is available.
 
-=head2 type()
-
-=head2 target()
-
-=head2 direction()
-
-=head2 attributes()
-
-=head2 begin()
-
-=head2 end()
-
-=head2 artist()
-
-=head2 release()
-
-=head2 track()
-
-=head2 score()
+=head2 count()
 
 =cut
 
-__PACKAGE__->mk_accessors(qw/type target direction attributes begin end artist release track label score/);
+__PACKAGE__->mk_accessors(qw/count/);
 
 =head1 AUTHOR
 
