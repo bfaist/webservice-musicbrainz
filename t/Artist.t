@@ -261,22 +261,64 @@ foreach my $release (@{ $mbid_counts_rel_list->releases() }) {
         ok( $release->text_rep_language() eq "ENG", 'artist counts release TEXT LANG');
         ok( $release->text_rep_script() eq "Latn", 'artist counts release TEXT SCRIPT');
         ok( $release->asin() eq "B00000B9AN", 'artist counts release ASIN');
-        ok( $release->release_info_list()->count() > 15, 'artist counts release info list COUNT');
         ok( $release->disc_list()->count() > 10, 'artist counts release DISC LIST COUNT');
         ok( $release->track_list()->count() > 8, 'artist counts release TRACK LIST COUNT');
+        # ok( $release->release_event_list()->count() > 15, 'artist counts release event list COUNT');
         last;
     }
 }
 
 # TODO:  need working MBID
-my $mbid_rel_events_response = $ws->search({ MBID => '65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab', INC => 'release-events' });
+my $mbid_rel_events_response = $ws->search({ MBID => '65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab', INC => 'release-events+sa-Official' });
 ok( $mbid_rel_events_response, 'artist by MBID RELEASE-EVENTS' );
+my $mbid_rel_events_artist = $mbid_rel_events_response->artist();
+ok( $mbid_rel_events_artist, 'artist rel events ARTIST');
+ok( $mbid_rel_events_artist->name() eq "Metallica", 'artist rel events artist NAME');
+ok( $mbid_rel_events_artist->sort_name() eq "Metallica", 'artist rel events artist SORT NAME');
+foreach my $release (@{ $mbid_rel_events_artist->release_list()->releases() }) {
+    if($release->id() eq "a89e1d92-5381-4dab-ba51-733137d0e431") {
+        ok( $release->type() eq "Album Official", 'artist rel events release TYPE');
+        ok( $release->title() eq "Kill 'em All", 'artist rel events release TITLE');
+        ok( $release->text_rep_language() eq "ENG", 'artist rel events release LANG');
+        ok( $release->text_rep_script() eq "Latn", 'artist rel events release SCRIPT');
+        ok( $release->asin() eq "B00000B9AN", 'artist rel events release ASIN');
+        foreach my $event (@{ $release->release_event_list()->events() }) {
+           if($event->barcode() eq "075596076623") {
+               ok( $event->date() eq "1988-01-15", 'artist rel events release events DATE');
+               ok( $event->country() eq "US", 'artist rel events release events COUNTRY');
+               ok( $event->catalog_number() eq "CD 60766", 'artist rel events release events CATALOG NUMBER');
+               ok( $event->format() eq "CD", 'artist rel events release events FORMAT');
+               last;
+           }
+        }
+        last;
+    }
+}
 
 sleep($sleep_duration);
 
-# TODO:  need working MBID
-my $mbid_discs_response = $ws->search({ MBID => '65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab', INC => 'discs' });
+my $mbid_discs_response = $ws->search({ MBID => '65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab', INC => 'discs+sa-Official' });
 ok( $mbid_discs_response, 'artist by MBID DISCS' );
+my $mbid_discs_artist = $mbid_discs_response->artist();
+ok( $mbid_discs_artist, 'artist discs ARTIST');
+ok( $mbid_discs_artist->name() eq "Metallica", 'artist discs artist NAME');
+ok( $mbid_discs_artist->sort_name() eq "Metallica", 'artist discs artist SORT NAME');
+foreach my $release (@{ $mbid_discs_artist->release_list()->releases() }) {
+    if($release->id() eq "456efd39-f0dc-4b4d-87c7-82bbc562d8f3") {
+        ok( $release->type() eq "Album Official", 'artist discs release TYPE');
+        ok( $release->title() eq "Ride the Lightning", 'artist discs release TITLE');
+        ok( $release->text_rep_language() eq "ENG", 'artist discs release LANG');
+        ok( $release->text_rep_script() eq "Latn", 'artist discs release SCRIPT');
+        ok( $release->asin() eq "B000002H2H", 'artist discs release ASIN');
+        foreach my $disc (@{ $release->disc_list()->discs() }) {
+           if($disc->id() eq "UhuTnSAqRRgWbuC0zf1rvAzFX9M-") {
+               ok( $disc->sectors() eq "213595", 'artist discs disc-list disc SECTORS');
+               last;
+           }
+        }
+        last;
+    }
+}
 
 # TODO:  need working MBID
 my $mbid_labels_response = $ws->search({ MBID => '65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab', INC => 'labels' });

@@ -383,7 +383,6 @@ sub _create_release {
    my ($xTrackList) = $xpc->findnodes('mmd:track-list[1]', $xRelease);
    my @xRelationList = $xpc->findnodes('mmd:relation-list', $xRelease);
    my ($xTagList) = $xpc->findnodes('mmd:tag-list[1]', $xRelease);
-   my ($xReleaseInfoList) = $xpc->findnodes('mmd:release-info-list[1]', $xRelease);
 
    require WebService::MusicBrainz::Response::Release;
 
@@ -406,7 +405,6 @@ sub _create_release {
    my $relationLists = $self->_create_relation_lists( \@xRelationList );
    $release->relation_list( $relationLists->[0] ) if $relationLists;
    $release->relation_lists( $relationLists ) if $relationLists;
-   $release->release_info_list( $self->_create_release_info_list($xReleaseInfoList) ) if $xReleaseInfoList;
 
    return $release;
 }
@@ -661,8 +659,9 @@ sub _create_event {
    $event->date( $xEvent->getAttribute('date') ) if $xEvent->getAttribute('date');
    $event->country( $xEvent->getAttribute('country') ) if $xEvent->getAttribute('country');
    $event->label( $xEvent->getAttribute('label') ) if $xEvent->getAttribute('label');
-   $event->catno( $xEvent->getAttribute('catno') ) if $xEvent->getAttribute('catno');
+   $event->catalog_number( $xEvent->getAttribute('catalog-number') ) if $xEvent->getAttribute('catalog-number');
    $event->barcode( $xEvent->getAttribute('barcode') ) if $xEvent->getAttribute('barcode');
+   $event->format( $xEvent->getAttribute('format') ) if $xEvent->getAttribute('format');
 
    return $event;
 }
@@ -937,19 +936,6 @@ sub _create_rating {
    $rating->value( $xRating->textContent() ) if $xRating->textContent();
 
    return $rating;
-}
-
-sub _create_release_info_list {
-   my $self = shift;
-   my ($xReleaseInfoList) = @_;
-
-   require WebService::MusicBrainz::Response::ReleaseInfoList;
-
-   my $ril = WebService::MusicBrainz::Response::ReleaseInfoList->new();
-
-   $ril->count( $xReleaseInfoList->getAttribute('count') ) if $xReleaseInfoList->getAttribute('count');
-
-   return $ril;
 }
 
 =head1 AUTHOR
