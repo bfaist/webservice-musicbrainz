@@ -652,13 +652,17 @@ sub _create_event {
    my $self = shift;
    my ($xEvent) = @_;
 
+   my $xpc = $self->xpc();
+
+   my ($xLabel) = $xpc->findnodes('mmd:label[1]', $xEvent);
+
    require WebService::MusicBrainz::Response::ReleaseEvent;
 
    my $event = WebService::MusicBrainz::Response::ReleaseEvent->new();
 
    $event->date( $xEvent->getAttribute('date') ) if $xEvent->getAttribute('date');
    $event->country( $xEvent->getAttribute('country') ) if $xEvent->getAttribute('country');
-   $event->label( $xEvent->getAttribute('label') ) if $xEvent->getAttribute('label');
+   $event->label( $self->_create_label($xLabel) ) if $xLabel;
    $event->catalog_number( $xEvent->getAttribute('catalog-number') ) if $xEvent->getAttribute('catalog-number');
    $event->barcode( $xEvent->getAttribute('barcode') ) if $xEvent->getAttribute('barcode');
    $event->format( $xEvent->getAttribute('format') ) if $xEvent->getAttribute('format');

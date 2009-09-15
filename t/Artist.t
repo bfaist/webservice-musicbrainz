@@ -320,9 +320,33 @@ foreach my $release (@{ $mbid_discs_artist->release_list()->releases() }) {
     }
 }
 
-# TODO:  need working MBID
-my $mbid_labels_response = $ws->search({ MBID => '65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab', INC => 'labels' });
+my $mbid_labels_response = $ws->search({ MBID => '65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab', INC => 'labels+release-events+sa-Official' });
 ok( $mbid_labels_response, 'artist by MBID LABELS' );
+my $mbid_labels_artist = $mbid_labels_response->artist();
+ok( $mbid_labels_artist, 'artist labels ARTIST');
+ok( $mbid_labels_artist->name() eq "Metallica", 'artist labels artist NAME');
+ok( $mbid_labels_artist->sort_name() eq "Metallica", 'artist labels artist SORT NAME');
+foreach my $release (@{ $mbid_labels_artist->release_list()->releases() }) {
+    if($release->id() eq "456efd39-f0dc-4b4d-87c7-82bbc562d8f3") {
+        ok( $release->type() eq "Album Official", 'artist labels release TYPE');
+        ok( $release->title() eq "Ride the Lightning", 'artist labels release TITLE');
+        ok( $release->text_rep_language() eq "ENG", 'artist labels release LANG');
+        ok( $release->text_rep_script() eq "Latn", 'artist labels release SCRIPT');
+        ok( $release->asin() eq "B000002H2H", 'artist labels release ASIN');
+        foreach my $event (@{ $release->release_event_list()->events() }) {
+           if($event->barcode() eq "075596039628") {
+               ok( $event->date() eq "1987", 'artist labels release event DATE');
+               ok( $event->country() eq "US", 'artist labels release event COUNTRY');
+               ok( $event->format() eq "CD", 'artist labels release event FORMAT');
+               ok( $event->catalog_number() eq "9 60396-2", 'artist labels release event CATALOG');
+               ok( $event->label()->id() eq "873f9f75-af68-4872-98e2-431058e4c9a9", 'artist labels release event label ID');
+               ok( $event->label()->name() eq "Elektra", 'artist labels release event label NAME');
+               last;
+           }
+        }
+        last;
+    }
+}
 
 sleep($sleep_duration);
 
