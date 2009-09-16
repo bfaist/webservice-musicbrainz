@@ -43,7 +43,7 @@ ok( $name_artist->id() eq "541f16f5-ad7a-428e-af89-9fa1b16d3c9c", 'first artist 
 ok( $name_artist->name() eq "Pantera", 'first artist name' );
 ok( $name_artist->sort_name() eq "Pantera", 'first artist sort-name' );
 ok( $name_artist->type() eq "Group", 'first artist type' );
-ok( $name_artist->score() eq "100", 'first artist score' );
+ok( $name_artist->score() > 90, 'first artist score' );
 ok( $name_artist->life_span_begin() eq "1982", 'first artist life-span-begin' );
 ok( $name_artist->life_span_end() eq "2003", 'first artist life-span-end' );
 

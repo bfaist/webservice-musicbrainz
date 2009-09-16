@@ -39,7 +39,7 @@ sub new {
 
    bless $self, $class;
 
-   $self->_init();
+   $self->_init(@_);
 
    return $self;
 }
@@ -47,7 +47,7 @@ sub new {
 sub _init {
    my $self = shift;
 
-   my $q = WebService::MusicBrainz::Query->new();
+   my $q = WebService::MusicBrainz::Query->new(@_);
 
    $q->set_url_params(qw/mbid title artist artistid releasetypes limit offset/);
    $q->set_inc_params(qw/artist releases/);
