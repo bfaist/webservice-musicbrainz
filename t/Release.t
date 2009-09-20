@@ -5,6 +5,7 @@
 
 # change 'tests => 1' to 'tests => last_test_to_print';
 
+use strict;
 use Test::More;
 BEGIN { use_ok('WebService::MusicBrainz::Release') };
 
@@ -88,6 +89,106 @@ foreach my $release (@{ $rel_artist_response->release_list()->releases() }) {
         ok( $release->artist()->name() eq "Van Halen", 'rel by artist release artist NAME');
         ok( $release->disc_list()->count() > 4, 'rel by artist release artist disc list COUNT');
         ok( $release->track_list()->count() > 8, 'rel by artist release artist track list COUNT');
+        last;
+    }
+}
+
+sleep($sleep_duration);
+
+my $rel_artistid_response = $ws->search({ ARTISTID => 'b665b768-0d83-4363-950c-31ed39317c15' });
+ok( $rel_artistid_response, 'rel by artistid');
+foreach my $release (@{ $rel_artistid_response->release_list()->releases() }) {
+    if($release->id() eq "cac41921-bd04-4ceb-b41c-ca9eb495c0f6") {
+        ok( $release->type() eq "Album Official", 'rel by artistid release TYPE');
+        ok( $release->score() > 90, 'rel by artistid release SCORE');
+        ok( $release->title() eq "5150", 'rel by artistid release TITLE');
+        ok( $release->text_rep_language() eq "ENG", 'rel by artistid release LANG');
+        ok( $release->text_rep_script() eq "Latn", 'rel by artistid release SCRIPT');
+        ok( $release->asin() eq "B000002L99", 'rel by artistid release ASIN');
+        ok( $release->artist()->id() eq "b665b768-0d83-4363-950c-31ed39317c15", 'rel by artistid release ARTIST');
+        ok( $release->artist()->name() eq "Van Halen", 'rel by artistid release artistid NAME');
+        ok( $release->disc_list()->count() > 4, 'rel by artistid release artistid disc list COUNT');
+        ok( $release->track_list()->count() > 8, 'rel by artistid release artistid track list COUNT');
+        last;
+    }
+}
+
+my $rel_reltypes_response = $ws->search({ ARTIST => 'Van Halen', RELEASETYPES => 'Bootleg' });
+ok( $rel_reltypes_response, 'rel by reltyppes');
+foreach my $release (@{ $rel_reltypes_response->release_list()->releases() }) {
+    if($release->id() eq "3ae1eae2-c6f2-4c08-9805-ccfcdc7d2a4b") {
+        ok($release->score() > 90, 'rel by reltypes SCORE');
+        ok($release->type() eq "Live Bootleg", 'rel by reltypes TYPE');
+        ok($release->title() eq "Secret Gig", 'rel by reltypes TITLE');
+        ok( $release->text_rep_language() eq "ENG", 'rel by reltypes release LANG');
+        ok( $release->text_rep_script() eq "Latn", 'rel by reltypes release SCRIPT');
+        ok( $release->artist()->id() eq "b665b768-0d83-4363-950c-31ed39317c15", 'rel by reltypes release ARTIST');
+        ok( $release->artist()->name() eq "Van Halen", 'rel by reltypes release artistid NAME');
+        ok( $release->disc_list()->count() > 0, 'rel by reltypes disc list COUNT');
+        ok( $release->track_list()->count() > 3, 'rel by reltypes track list COUNT');
+        last;
+    }
+}
+
+sleep($sleep_duration);
+
+my $rel_count_response = $ws->search({ ARTIST => 'Van Halen', COUNT => 10 });
+ok( $rel_count_response, 'rel by count');
+foreach my $release (@{ $rel_count_response->release_list()->releases() }) {
+    if($release->id() eq "006b0c0e-2e35-49a4-9c2f-68770c6c1bde") {
+        ok($release->score() > 90, 'rel by count SCORE');
+        ok($release->type() eq "Album Official", 'rel by count TYPE');
+        ok($release->title() eq "OU812", 'rel by count TITLE');
+        ok( $release->text_rep_language() eq "ENG", 'rel by count release LANG');
+        ok( $release->text_rep_script() eq "Latn", 'rel by count release SCRIPT');
+        ok( $release->artist()->id() eq "b665b768-0d83-4363-950c-31ed39317c15", 'rel by count release ARTIST');
+        ok( $release->artist()->name() eq "Van Halen", 'rel by count release artistid NAME');
+        ok( $release->disc_list()->count() > 2, 'rel by count disc list COUNT');
+        ok( $release->track_list()->count() == 10, 'rel by count track list COUNT');
+        last;
+    }
+}
+
+my $rel_date_response = $ws->search({ ARTIST => 'Van Halen', DATE => '1980' });
+ok( $rel_date_response, 'rel by date');
+foreach my $release (@{ $rel_date_response->release_list()->releases() }) {
+    if($release->id() eq "71ee7c4a-8da9-438d-a344-7626b91005dc") {
+        ok($release->score() > 90, 'rel by date SCORE');
+        ok($release->type() eq "Album Official", 'rel by date TYPE');
+        ok($release->title() eq "Women and Children First", 'rel by date TITLE');
+        ok( $release->text_rep_language() eq "ENG", 'rel by date release LANG');
+        ok( $release->text_rep_script() eq "Latn", 'rel by date release SCRIPT');
+        ok( $release->artist()->id() eq "b665b768-0d83-4363-950c-31ed39317c15", 'rel by date release ARTIST');
+        ok( $release->artist()->name() eq "Van Halen", 'rel by date release artistid NAME');
+        ok( $release->disc_list()->count() > 5, 'rel by date disc list COUNT');
+        ok( $release->track_list()->count() > 8, 'rel by date track list COUNT');
+        foreach my $event (@{ $release->release_event_list()->events() }) {
+            if($event->label() eq "Warner Music UK") {
+                ok( $event->country() eq "GB", 'rel by date event COUNTRY');
+                ok( $event->date() eq "1980", 'rel by date event DATE');
+                last;
+            }
+        }
+        last;
+    }
+}
+
+sleep($sleep_duration);
+
+my $rel_asin_response = $ws->search({ ARTIST => 'Van Halen', ASIN => "B000002LEM" });
+ok( $rel_asin_response, 'rel by asin');
+foreach my $release (@{ $rel_asin_response->release_list()->releases() }) {
+    if($release->id() eq "006b0c0e-2e35-49a4-9c2f-68770c6c1bde") {
+        ok($release->score() > 90, 'rel by asin SCORE');
+        ok($release->type() eq "Album Official", 'rel by asin TYPE');
+        ok($release->title() eq "OU812", 'rel by asin TITLE');
+        ok($release->asin() eq "B000002LEM", 'rel by asin ASIN');
+        ok( $release->text_rep_language() eq "ENG", 'rel by asin release LANG');
+        ok( $release->text_rep_script() eq "Latn", 'rel by asin release SCRIPT');
+        ok( $release->artist()->id() eq "b665b768-0d83-4363-950c-31ed39317c15", 'rel by asin release ARTIST');
+        ok( $release->artist()->name() eq "Van Halen", 'rel by asin release artistid NAME');
+        ok( $release->disc_list()->count() > 2, 'rel by asin disc list COUNT');
+        ok( $release->track_list()->count() == 10, 'rel by asin track list COUNT');
         last;
     }
 }

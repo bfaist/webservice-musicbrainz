@@ -5,6 +5,7 @@
 
 # change 'tests => 1' to 'tests => last_test_to_print';
 
+use strict;
 use Test::More;
 BEGIN { use_ok('WebService::MusicBrainz::Artist') };
 
