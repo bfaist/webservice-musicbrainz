@@ -53,7 +53,7 @@ sub _init {
 
    my $q = WebService::MusicBrainz::Query->new(@_);
 
-   $q->set_url_params(qw/mbid name limit offset/);
+   $q->set_url_params(qw/mbid name limit offset query/);
    $q->set_inc_params(qw/aliases release-groups artist-rels release-rels track-rels url-rels sa- va- label-rels tags ratings user-tags user-ratings counts release-events discs labels/);
 
    $self->{_query} = $q;

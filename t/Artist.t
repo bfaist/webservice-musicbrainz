@@ -351,4 +351,17 @@ foreach my $release (@{ $mbid_labels_artist->release_list()->releases() }) {
 
 sleep($sleep_duration);
 
+my $q1_response = $ws->search({ QUERY => 'begin:1990 AND type:group'});
+ok($q1_response, 'artist query begin type');
+foreach my $artist (@{ $q1_response->artist_list()->artists() }) {
+    if($artist->id() eq "e9571c17-817f-4d34-ae3f-0c7a96f822c1") {
+        ok($artist->type() eq "Group", 'artist query begin type TYPE');
+        ok($artist->name() eq "Temple of the Dog", 'artist query begin type NAME');
+        ok($artist->sort_name() eq "Temple of the Dog", 'artist query begin type SORT NAME');
+        ok($artist->life_span_begin() eq "1990", 'artist query begin type LIFE SPAN BEGIN');
+        ok($artist->life_span_end() eq "1991", 'artist query begin type LIFE SPAN END');
+        last;
+    }
+}
+
 done_testing();
