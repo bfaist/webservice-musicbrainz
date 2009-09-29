@@ -149,7 +149,7 @@ sub _validate_params {
 
       my @new_terms;
       foreach my $term (split /[\s\+,]/, $params->{$key}) {
-          push @new_terms, URI::Escape::uri_escape($term);
+          push @new_terms, URI::Escape::uri_escape_utf8($term);
       }
 
       $params->{$key} = join '+', @new_terms;
