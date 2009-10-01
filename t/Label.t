@@ -23,7 +23,8 @@ my $wsde = WebService::MusicBrainz::Label->new(HOST => 'de.musicbrainz.org');
 my $wsde_query = $wsde->query();
 ok( $wsde_query->{_baseurl} =~ m/de\.musicbrainz\.org/, 'create WebService::MusicBrainz::Label object/altername host' );
 
-
 sleep($sleep_duration);
+
+
 
 done_testing();

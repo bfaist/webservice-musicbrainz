@@ -234,4 +234,59 @@ sleep($sleep_duration);
 #     }
 # }
 
+my $rel_limit_response = $ws->search({ ARTIST => 'Van Halen', LIMIT => "40" });
+ok( $rel_limit_response, 'rel by limit');
+ok( scalar(@{ $rel_limit_response->release_list()->releases() }) == 40, 'release limit');
+
+my $rel_mbid_artist_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'artist' });
+ok( $rel_mbid_artist_response, 'rel mbid inc artist');
+my $rel_mbid_artist_release = $rel_mbid_artist_response->release();
+ok( $rel_mbid_artist_release, 'rel mbid inc artist RELEASE');
+ok( $rel_mbid_artist_release->id() eq "ff565cd7-acf8-4dc0-9603-72d1b7ae284b", 'rel mbid inc artist release ID');
+ok( $rel_mbid_artist_release->type() eq "Album Official", 'rel mbid inc artist release TYPE');
+ok( $rel_mbid_artist_release->title() eq "1984", 'rel mbid inc artist release TITLE');
+ok( $rel_mbid_artist_release->text_rep_language() eq "ENG", 'rel mbid inc artist release LANG');
+ok( $rel_mbid_artist_release->text_rep_script() eq "Latn", 'rel mbid inc artist release SCRIPT');
+ok( $rel_mbid_artist_release->artist()->id() eq "b665b768-0d83-4363-950c-31ed39317c15", 'rel mbid inc artist release artist ID');
+ok( $rel_mbid_artist_release->artist()->type() eq "Group", 'rel mbid inc artist release artist TYPE');
+ok( $rel_mbid_artist_release->artist()->name() eq "Van Halen", 'rel mbid inc artist release artist NAME');
+ok( $rel_mbid_artist_release->artist()->sort_name() eq "Van Halen", 'rel mbid inc artist release artist SORT NAME');
+
+sleep($sleep_duration);
+
+my $rel_mbid_counts_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'counts' });
+ok( $rel_mbid_counts_response, 'rel mbid inc counts');
+my $rel_mbid_counts_release = $rel_mbid_counts_response->release();
+ok( $rel_mbid_counts_release, 'rel mbid inc counts RELEASE');
+ok( $rel_mbid_counts_release->id() eq "ff565cd7-acf8-4dc0-9603-72d1b7ae284b", 'rel mbid inc counts release ID');
+ok( $rel_mbid_counts_release->type() eq "Album Official", 'rel mbid inc counts release TYPE');
+ok( $rel_mbid_counts_release->title() eq "1984", 'rel mbid inc counts release TITLE');
+ok( $rel_mbid_counts_release->text_rep_language() eq "ENG", 'rel mbid inc counts release LANG');
+ok( $rel_mbid_counts_release->text_rep_script() eq "Latn", 'rel mbid inc counts release SCRIPT');
+ok( $rel_mbid_counts_release->asin() eq "B00004Y6O3", 'rel mbid inc counts release ASIN');
+# ok( $rel_mbid_counts_release->release_event_list()->count() > 1 , 'rel mbid inc counts release release_info_list COUNT');
+ok( $rel_mbid_counts_release->disc_list()->count() > 7, 'rel mbid inc counts release disc_list COUNT');
+
+my $rel_mbid_events_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'release-events' });
+ok( $rel_mbid_events_response, 'rel mbid inc events');
+my $rel_mbid_events_release = $rel_mbid_events_response->release();
+ok( $rel_mbid_events_release, 'rel mbid inc events RELEASE');
+ok( $rel_mbid_events_release->id() eq "ff565cd7-acf8-4dc0-9603-72d1b7ae284b", 'rel mbid inc events release ID');
+ok( $rel_mbid_events_release->type() eq "Album Official", 'rel mbid inc events release TYPE');
+ok( $rel_mbid_events_release->title() eq "1984", 'rel mbid inc events release TITLE');
+ok( $rel_mbid_events_release->text_rep_language() eq "ENG", 'rel mbid inc events release LANG');
+ok( $rel_mbid_events_release->text_rep_script() eq "Latn", 'rel mbid inc events release SCRIPT');
+ok( $rel_mbid_events_release->asin() eq "B00004Y6O3", 'rel mbid inc events release ASIN');
+foreach my $event (@{ $rel_mbid_events_release->release_event_list()->events() }) {
+   if($event->barcode() eq "075992398527") {
+      ok( $event->date() eq "1984-01-09", 'rel mbid inc events rel_event_list event DATE');
+      ok( $event->country() eq "US", 'rel mbid inc events rel_event_list event COUNTRY');
+      ok( $event->catalog_number() eq "9 23985-2", 'rel mbid inc events rel_event_list event CATALOG NUMBER');
+      ok( $event->format() eq "CD", 'rel mbid inc events rel_event_list event FORMAT');
+      last;
+   }
+}
+
+sleep($sleep_duration);
+
 done_testing();
