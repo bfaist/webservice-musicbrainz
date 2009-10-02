@@ -264,7 +264,7 @@ ok( $rel_mbid_counts_release->title() eq "1984", 'rel mbid inc counts release TI
 ok( $rel_mbid_counts_release->text_rep_language() eq "ENG", 'rel mbid inc counts release LANG');
 ok( $rel_mbid_counts_release->text_rep_script() eq "Latn", 'rel mbid inc counts release SCRIPT');
 ok( $rel_mbid_counts_release->asin() eq "B00004Y6O3", 'rel mbid inc counts release ASIN');
-# ok( $rel_mbid_counts_release->release_event_list()->count() > 1 , 'rel mbid inc counts release release_info_list COUNT');
+ok( $rel_mbid_counts_release->release_event_list()->count() > 1 , 'rel mbid inc counts release release_info_list COUNT');
 ok( $rel_mbid_counts_release->disc_list()->count() > 7, 'rel mbid inc counts release disc_list COUNT');
 
 my $rel_mbid_events_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'release-events' });
@@ -288,5 +288,56 @@ foreach my $event (@{ $rel_mbid_events_release->release_event_list()->events() }
 }
 
 sleep($sleep_duration);
+
+my $rel_mbid_discs_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'discs' });
+ok( $rel_mbid_discs_response, 'rel mbid inc discs');
+my $rel_mbid_discs_release = $rel_mbid_discs_response->release();
+ok( $rel_mbid_discs_release, 'rel mbid inc discs RELEASE');
+ok( $rel_mbid_discs_release->id() eq "ff565cd7-acf8-4dc0-9603-72d1b7ae284b", 'rel mbid inc discs release ID');
+ok( $rel_mbid_discs_release->type() eq "Album Official", 'rel mbid inc discs release TYPE');
+ok( $rel_mbid_discs_release->title() eq "1984", 'rel mbid inc discs release TITLE');
+ok( $rel_mbid_discs_release->text_rep_language() eq "ENG", 'rel mbid inc discs release LANG');
+ok( $rel_mbid_discs_release->text_rep_script() eq "Latn", 'rel mbid inc discs release SCRIPT');
+ok( $rel_mbid_discs_release->asin() eq "B00004Y6O3", 'rel mbid inc discs release ASIN');
+foreach my $disc (@{ $rel_mbid_discs_release->disc_list()->discs() }) {
+   if($disc->id() eq "RYubBCKHdNeT.M51Xv6hUeCuUjY-") {
+      ok( $disc->sectors() eq "150400", 'rel mbid inc discs SECTORS');
+      last;
+   }
+}
+
+my $rel_mbid_tracks_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'tracks' });
+ok( $rel_mbid_tracks_response, 'rel mbid inc tracks');
+my $rel_mbid_tracks_release = $rel_mbid_tracks_response->release();
+ok( $rel_mbid_tracks_release, 'rel mbid inc tracks RELEASE');
+ok( $rel_mbid_tracks_release->id() eq "ff565cd7-acf8-4dc0-9603-72d1b7ae284b", 'rel mbid inc tracks release ID');
+ok( $rel_mbid_tracks_release->type() eq "Album Official", 'rel mbid inc tracks release TYPE');
+ok( $rel_mbid_tracks_release->title() eq "1984", 'rel mbid inc tracks release TITLE');
+ok( $rel_mbid_tracks_release->text_rep_language() eq "ENG", 'rel mbid inc tracks release LANG');
+ok( $rel_mbid_tracks_release->text_rep_script() eq "Latn", 'rel mbid inc tracks release SCRIPT');
+ok( $rel_mbid_tracks_release->asin() eq "B00004Y6O3", 'rel mbid inc tracks release ASIN');
+foreach my $track (@{ $rel_mbid_tracks_release->track_list()->tracks() }) {
+   if($track->id() eq "77ee68a0-f28e-46ce-9751-2ec2c54943c6") {
+      ok( $track->title() eq "Hot for Teacher", 'rel mbid inc tracks TITLE');
+      ok( $track->duration() eq "284600", 'rel mbid inc tracks DURATION');
+      last;
+   }
+}
+
+sleep($sleep_duration);
+
+my $rel_mbid_relgroups_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'release-groups' });
+ok( $rel_mbid_relgroups_response, 'rel mbid inc relgroups');
+my $rel_mbid_relgroups_release = $rel_mbid_relgroups_response->release();
+ok( $rel_mbid_relgroups_release, 'rel mbid inc relgroups RELEASE');
+ok( $rel_mbid_relgroups_release->id() eq "ff565cd7-acf8-4dc0-9603-72d1b7ae284b", 'rel mbid inc relgroups release ID');
+ok( $rel_mbid_relgroups_release->type() eq "Album Official", 'rel mbid inc relgroups release TYPE');
+ok( $rel_mbid_relgroups_release->title() eq "1984", 'rel mbid inc relgroups release TITLE');
+ok( $rel_mbid_relgroups_release->text_rep_language() eq "ENG", 'rel mbid inc relgroups release LANG');
+ok( $rel_mbid_relgroups_release->text_rep_script() eq "Latn", 'rel mbid inc relgroups release SCRIPT');
+ok( $rel_mbid_relgroups_release->asin() eq "B00004Y6O3", 'rel mbid inc relgroups release ASIN');
+ok( $rel_mbid_relgroups_release->release_group()->id() eq "5846f0c9-fec3-3b9e-a77c-fbe9a7bdf0e7", 'rel mbid inc relgroups ID');
+ok( $rel_mbid_relgroups_release->release_group()->type() eq "Album", 'rel mbid inc relgroups TYPE');
+ok( $rel_mbid_relgroups_release->release_group()->title() eq "1984", 'rel mbid inc relgroups TITLE');
 
 done_testing();

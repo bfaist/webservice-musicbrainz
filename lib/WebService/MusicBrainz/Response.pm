@@ -383,6 +383,10 @@ sub _create_release {
    my ($xTrackList) = $xpc->findnodes('mmd:track-list[1]', $xRelease);
    my @xRelationList = $xpc->findnodes('mmd:relation-list', $xRelease);
    my ($xTagList) = $xpc->findnodes('mmd:tag-list[1]', $xRelease);
+   my ($xReleaseGroup) = $xpc->findnodes('mmd:release-group[1]', $xRelease);
+   # my ($xUserTagList) = $xpc->findnodes('mmd:user-tag-list[1]', $xRelease);
+   my ($xRating) = $xpc->findnodes('mmd:rating[1]', $xRelease);
+   # my ($xUserRating) = $xpc->findnodes('mmd:user-rating[1]', $xRelease);
 
    require WebService::MusicBrainz::Response::Release;
 
@@ -397,10 +401,14 @@ sub _create_release {
    $release->score( $xRelease->getAttribute('ext:score') ) if $xRelease->getAttribute('ext:score');
    $release->artist( $self->_create_artist( $xArtist ) ) if $xArtist;
    $release->release_event_list( $self->_create_release_event_list( $xReleaseEventList ) ) if $xReleaseEventList;
+   $release->release_group( $self->_create_release_group( $xReleaseGroup ) ) if $xReleaseGroup;
    $release->disc_list( $self->_create_disc_list( $xDiscList ) ) if $xDiscList;
    $release->puid_list( $self->_create_puid_list( $xPuidList ) ) if $xPuidList;
    $release->track_list( $self->_create_track_list( $xTrackList ) ) if $xTrackList;
    $release->tag_list( $self->_create_tag_list( $xTagList ) ) if $xTagList;
+   # $release->user_tag_list( $self->_create_user_tag_list( $xUserTagList ) ) if $xUserTagList;
+   $release->rating( $self->_create_rating( $xRating ) ) if $xRating;
+   # $release->user_rating( $self->_create_user_rating( $xUserRating ) ) if $xUserRating;
 
    my $relationLists = $self->_create_relation_lists( \@xRelationList );
    $release->relation_list( $relationLists->[0] ) if $relationLists;
