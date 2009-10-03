@@ -340,4 +340,85 @@ ok( $rel_mbid_relgroups_release->release_group()->id() eq "5846f0c9-fec3-3b9e-a7
 ok( $rel_mbid_relgroups_release->release_group()->type() eq "Album", 'rel mbid inc relgroups TYPE');
 ok( $rel_mbid_relgroups_release->release_group()->title() eq "1984", 'rel mbid inc relgroups TITLE');
 
+
+my $rel_mbid_artistrels_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'artist-rels' });
+ok( $rel_mbid_artistrels_response, 'rel mbid inc artistrels');
+my $rel_mbid_artistrels_release = $rel_mbid_artistrels_response->release();
+ok( $rel_mbid_artistrels_release, 'rel mbid inc artistrels RELEASE');
+ok( $rel_mbid_artistrels_release->id() eq "ff565cd7-acf8-4dc0-9603-72d1b7ae284b", 'rel mbid inc artistrels release ID');
+ok( $rel_mbid_artistrels_release->type() eq "Album Official", 'rel mbid inc artistrels release TYPE');
+ok( $rel_mbid_artistrels_release->title() eq "1984", 'rel mbid inc artistrels release TITLE');
+ok( $rel_mbid_artistrels_release->text_rep_language() eq "ENG", 'rel mbid inc artistrels release LANG');
+ok( $rel_mbid_artistrels_release->text_rep_script() eq "Latn", 'rel mbid inc artistrels release SCRIPT');
+ok( $rel_mbid_artistrels_release->asin() eq "B00004Y6O3", 'rel mbid inc artistrels release ASIN');
+ok( $rel_mbid_artistrels_release->relation_list()->target_type() eq "Artist", 'rel mbid inc artistrels release rellist TARGETTYPE');
+foreach my $relation (@{ $rel_mbid_artistrels_release->relation_list()->relations() }) {
+   if($relation->target() eq "802d37d5-0aaa-492e-b366-99f75e5a196f") {
+      ok( $relation->type() eq "Vocal", 'rel mbid inc artistrels release TYPE');
+      ok( $relation->artist()->id() eq "802d37d5-0aaa-492e-b366-99f75e5a196f", 'rel mbid inc artistrels artist ID');
+      ok( $relation->artist()->name() eq "David Lee Roth", 'rel mbid inc artistrels artist NAME');
+      ok( $relation->artist()->sort_name() eq "Roth, David Lee", 'rel mbid inc artistrels artist SORTNAME');
+      ok( $relation->artist()->life_span_begin() eq "1955-10-10", 'rel mbid inc artistrels artist BEGIN');
+      last;
+   }
+}
+
+sleep($sleep_duration);
+
+# label-rels
+# release-rels
+# track-rels
+
+my $rel_mbid_urlrels_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'url-rels' });
+ok( $rel_mbid_urlrels_response, 'rel mbid inc urlrels');
+my $rel_mbid_urlrels_release = $rel_mbid_urlrels_response->release();
+ok( $rel_mbid_urlrels_release, 'rel mbid inc urlrels RELEASE');
+ok( $rel_mbid_urlrels_release->id() eq "ff565cd7-acf8-4dc0-9603-72d1b7ae284b", 'rel mbid inc urlrels release ID');
+ok( $rel_mbid_urlrels_release->type() eq "Album Official", 'rel mbid inc urlrels release TYPE');
+ok( $rel_mbid_urlrels_release->title() eq "1984", 'rel mbid inc urlrels release TITLE');
+ok( $rel_mbid_urlrels_release->text_rep_language() eq "ENG", 'rel mbid inc urlrels release LANG');
+ok( $rel_mbid_urlrels_release->text_rep_script() eq "Latn", 'rel mbid inc urlrels release SCRIPT');
+ok( $rel_mbid_urlrels_release->asin() eq "B00004Y6O3", 'rel mbid inc urlrels release ASIN');
+ok( $rel_mbid_urlrels_release->relation_list()->target_type() eq "Url", 'rel mbid inc urlrels release rellist TARGETTYPE');
+foreach my $relation (@{ $rel_mbid_urlrels_release->relation_list()->relations() }) {
+   if($relation->target() eq 'http://en.wikipedia.org/wiki/1984_%28Van_Halen_album%29') {
+      ok( $relation->type() eq "Wikipedia", 'rel mbid inc urlrels release TYPE');
+      last;
+   }
+}
+
+# track-level-rels
+# labels
+
+my $rel_mbid_tags_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'tags' });
+ok( $rel_mbid_tags_response, 'rel mbid inc tags');
+my $rel_mbid_tags_release = $rel_mbid_tags_response->release();
+ok( $rel_mbid_tags_release, 'rel mbid inc tags RELEASE');
+ok( $rel_mbid_tags_release->id() eq "ff565cd7-acf8-4dc0-9603-72d1b7ae284b", 'rel mbid inc tags release ID');
+ok( $rel_mbid_tags_release->type() eq "Album Official", 'rel mbid inc tags release TYPE');
+ok( $rel_mbid_tags_release->title() eq "1984", 'rel mbid inc tags release TITLE');
+ok( $rel_mbid_tags_release->text_rep_language() eq "ENG", 'rel mbid inc tags release LANG');
+ok( $rel_mbid_tags_release->text_rep_script() eq "Latn", 'rel mbid inc tags release SCRIPT');
+ok( $rel_mbid_tags_release->asin() eq "B00004Y6O3", 'rel mbid inc tags release ASIN');
+foreach my $tag (@{ $rel_mbid_tags_release->tag_list()->tags() }) {
+     ok( $tag->count() == 2, 'rel mbid inc tags tag COUNT') if($tag->text() eq "hard rock");
+     ok( $tag->count() == 2, 'rel mbid inc tags tag COUNT') if($tag->text() eq "rock");
+     ok( $tag->count() == 1, 'rel mbid inc tags tag COUNT') if($tag->text() eq "1984");
+}
+
+my $rel_mbid_ratings_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'ratings' });
+ok( $rel_mbid_ratings_response, 'rel mbid inc ratings');
+my $rel_mbid_ratings_release = $rel_mbid_ratings_response->release();
+ok( $rel_mbid_ratings_release, 'rel mbid inc ratings RELEASE');
+ok( $rel_mbid_ratings_release->id() eq "ff565cd7-acf8-4dc0-9603-72d1b7ae284b", 'rel mbid inc ratings release ID');
+ok( $rel_mbid_ratings_release->type() eq "Album Official", 'rel mbid inc ratings release TYPE');
+ok( $rel_mbid_ratings_release->title() eq "1984", 'rel mbid inc ratings release TITLE');
+ok( $rel_mbid_ratings_release->text_rep_language() eq "ENG", 'rel mbid inc ratings release LANG');
+ok( $rel_mbid_ratings_release->text_rep_script() eq "Latn", 'rel mbid inc ratings release SCRIPT');
+ok( $rel_mbid_ratings_release->asin() eq "B00004Y6O3", 'rel mbid inc ratings release ASIN');
+ok( $rel_mbid_ratings_release->rating()->votes_count() > 1, 'rel mbid inc ratings release rating VOTE COUNT');
+ok( $rel_mbid_ratings_release->rating()->value() > 3, 'rel mbid inc ratings release rating TEXT');
+
+# isrcs
+
 done_testing();
