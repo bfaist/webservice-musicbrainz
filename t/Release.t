@@ -388,7 +388,30 @@ foreach my $relation (@{ $rel_mbid_urlrels_release->relation_list()->relations()
 }
 
 # track-level-rels
-# labels
+
+my $rel_mbid_labels_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'release-events+labels' });
+ok( $rel_mbid_labels_response, 'rel mbid inc labels');
+my $rel_mbid_labels_release = $rel_mbid_labels_response->release();
+ok( $rel_mbid_labels_release, 'rel mbid inc labels RELEASE');
+ok( $rel_mbid_labels_release->id() eq "ff565cd7-acf8-4dc0-9603-72d1b7ae284b", 'rel mbid inc labels release ID');
+ok( $rel_mbid_labels_release->type() eq "Album Official", 'rel mbid inc labels release TYPE');
+ok( $rel_mbid_labels_release->title() eq "1984", 'rel mbid inc labels release TITLE');
+ok( $rel_mbid_labels_release->text_rep_language() eq "ENG", 'rel mbid inc labels release LANG');
+ok( $rel_mbid_labels_release->text_rep_script() eq "Latn", 'rel mbid inc labels release SCRIPT');
+ok( $rel_mbid_labels_release->asin() eq "B00004Y6O3", 'rel mbid inc labels release ASIN');
+foreach my $event (@{ $rel_mbid_labels_release->release_event_list()->events() }) {
+   if($event->barcode() eq '075992398527') {
+      ok( $event->date() eq "1984-01-09", 'rel mbid inc labels release event DATE');
+      ok( $event->country() eq "US", 'rel mbid inc labels release event COUNTRY');
+      ok( $event->catalog_number() eq "9 23985-2", 'rel mbid inc labels release event CAT NUM');
+      ok( $event->format() eq "CD", 'rel mbid inc labels release event FORMAT');
+      ok( $event->label()->id() eq "c595c289-47ce-4fba-b999-b87503e8cb71", 'rel mbid inc labels release event label ID');
+      ok( $event->label()->name() eq "Warner Bros. Records", 'rel mbid inc labels release event label NAME');
+      last;
+   }
+}
+
+sleep($sleep_duration);
 
 my $rel_mbid_tags_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'tags' });
 ok( $rel_mbid_tags_response, 'rel mbid inc tags');
