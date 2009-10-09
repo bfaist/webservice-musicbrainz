@@ -96,6 +96,74 @@ Multiple INC params can be delimited by whitespace, commas, or + characters.
     my $response = $ws->search({ MBID => 'fed37cfc-2a6d-4569-9ac0-501a7c7598eb', INC => 'artist,url-rels' });
     my $response = $ws->search({ MBID => 'fed37cfc-2a6d-4569-9ac0-501a7c7598eb', INC => 'artist+url-rels' });
 
+=head3 Find a release by title
+
+my $rel_title = $ws->search({ TITLE => 'Van Halen' });
+
+=head3 Find a release by disc id
+
+my $rel_discid = $ws->search({ DISCID => 'Qb6ACLJhzNM46cXKVZSh3qMOv6A-' });
+
+=head3 Find a release by artist name 
+
+my $rel_artist_response = $ws->search({ ARTIST => 'Van Halen' });
+
+=head3 Find a release by artist MBID
+
+my $rel_artistid_response = $ws->search({ ARTISTID => 'b665b768-0d83-4363-950c-31ed39317c15' });
+
+=head3 Find a release by artist name and release type
+
+my $rel_reltypes_response = $ws->search({ ARTIST => 'Van Halen', RELEASETYPES => 'Bootleg' });
+
+=head3 Find a release by artist name and count
+
+my $rel_count_response = $ws->search({ ARTIST => 'Van Halen', COUNT => 10 });
+
+=head3 Find a release by artist name and release date
+
+my $rel_date_response = $ws->search({ ARTIST => 'Van Halen', DATE => '1980' });
+
+=head3 Find a release by artist name and limit
+
+my $rel_limit_response = $ws->search({ ARTIST => 'Van Halen', LIMIT => "40" });
+
+=head3 Find a release by MBID and include counts
+
+my $rel_mbid_counts_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'counts' });
+
+=head3 Find a release by MBID and include release events
+
+my $rel_mbid_events_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'release-events' });
+
+=head3 Find a release by MBID and include discs
+
+my $rel_mbid_discs_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'discs' });
+
+=head3 Find a release by MBID and include tracks
+
+my $rel_mbid_tracks_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'tracks' });
+
+=head3 Find a release by MBID and include release groups
+
+my $rel_mbid_relgroups_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'release-groups' });
+
+=head3 Find a release by MBID and include artist relations
+
+my $rel_mbid_artistrels_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'artist-rels' });
+ 
+=head3 Find a release by MBID and include URL relations
+
+my $rel_mbid_urlrels_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'url-rels' });
+
+=head3 Find a release by MBID and include tags
+
+my $rel_mbid_tags_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'tags' });
+
+=head3 Find a release by MBID and include ratings
+
+my $rel_mbid_ratings_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'ratings' });
+
 =cut
 
 sub search {
