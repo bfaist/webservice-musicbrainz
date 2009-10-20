@@ -1,104 +1,136 @@
 ---
 name: WebService-MusicBrainz
-version: 0.22
+version: 0.91
 author:
   - 'Bob Faist <bob.faist@gmail.com>'
 abstract: Web service API to MusicBrainz database
 license: perl
 resources:
   license: http://dev.perl.org/licenses/
+  repository: git://github.com/bfaist/webservice-musicbrainz.git
 requires:
   Class::Accessor: 0.30
   LWP::UserAgent: 2.0
+  Test::More: 0.88
   URI: 1.35
   XML::LibXML: 1.63
   perl: 5.7.0
 provides:
   WebService::MusicBrainz:
     file: lib/WebService/MusicBrainz.pm
-    version: 0.22
+    version: 0.91
   WebService::MusicBrainz::Artist:
     file: lib/WebService/MusicBrainz/Artist.pm
-    version: 0.22
+    version: 0.91
   WebService::MusicBrainz::Label:
     file: lib/WebService/MusicBrainz/Label.pm
-    version: 0.22
+    version: 0.91
   WebService::MusicBrainz::Query:
     file: lib/WebService/MusicBrainz/Query.pm
-    version: 0.22
+    version: 0.91
   WebService::MusicBrainz::Release:
     file: lib/WebService/MusicBrainz/Release.pm
-    version: 0.22
+    version: 0.91
+  WebService::MusicBrainz::ReleaseGroup:
+    file: lib/WebService/MusicBrainz/ReleaseGroup.pm
+    version: 0.91
   WebService::MusicBrainz::Response:
     file: lib/WebService/MusicBrainz/Response.pm
-    version: 0.22
+    version: 0.91
   WebService::MusicBrainz::Response::Alias:
     file: lib/WebService/MusicBrainz/Response/Alias.pm
-    version: 0.22
+    version: 0.91
   WebService::MusicBrainz::Response::AliasList:
     file: lib/WebService/MusicBrainz/Response/AliasList.pm
-    version: 0.22
+    version: 0.91
   WebService::MusicBrainz::Response::Artist:
     file: lib/WebService/MusicBrainz/Response/Artist.pm
-    version: 0.22
+    version: 0.91
   WebService::MusicBrainz::Response::ArtistList:
     file: lib/WebService/MusicBrainz/Response/ArtistList.pm
-    version: 0.22
+    version: 0.91
   WebService::MusicBrainz::Response::Disc:
     file: lib/WebService/MusicBrainz/Response/Disc.pm
-    version: 0.22
+    version: 0.91
   WebService::MusicBrainz::Response::DiscList:
     file: lib/WebService/MusicBrainz/Response/DiscList.pm
-    version: 0.22
+    version: 0.91
+  WebService::MusicBrainz::Response::ISRC:
+    file: lib/WebService/MusicBrainz/Response/ISRC.pm
+    version: 0.91
+  WebService::MusicBrainz::Response::ISRCList:
+    file: lib/WebService/MusicBrainz/Response/ISRCList.pm
+    version: 0.91
   WebService::MusicBrainz::Response::Label:
     file: lib/WebService/MusicBrainz/Response/Label.pm
-    version: 0.22
+    version: 0.91
   WebService::MusicBrainz::Response::LabelList:
     file: lib/WebService/MusicBrainz/Response/LabelList.pm
-    version: 0.22
+    version: 0.91
   WebService::MusicBrainz::Response::Metadata:
     file: lib/WebService/MusicBrainz/Response/Metadata.pm
-    version: 0.22
+    version: 0.91
   WebService::MusicBrainz::Response::Puid:
     file: lib/WebService/MusicBrainz/Response/Puid.pm
-    version: 0.22
+    version: 0.91
   WebService::MusicBrainz::Response::PuidList:
     file: lib/WebService/MusicBrainz/Response/PuidList.pm
-    version: 0.22
+    version: 0.91
+  WebService::MusicBrainz::Response::Rating:
+    file: lib/WebService/MusicBrainz/Response/Rating.pm
+    version: 0.91
   WebService::MusicBrainz::Response::Relation:
     file: lib/WebService/MusicBrainz/Response/Relation.pm
-    version: 0.22
+    version: 0.91
   WebService::MusicBrainz::Response::RelationList:
     file: lib/WebService/MusicBrainz/Response/RelationList.pm
-    version: 0.22
+    version: 0.91
   WebService::MusicBrainz::Response::Release:
     file: lib/WebService/MusicBrainz/Response/Release.pm
-    version: 0.22
+    version: 0.91
   WebService::MusicBrainz::Response::ReleaseEvent:
     file: lib/WebService/MusicBrainz/Response/ReleaseEvent.pm
-    version: 0.22
+    version: 0.91
   WebService::MusicBrainz::Response::ReleaseEventList:
     file: lib/WebService/MusicBrainz/Response/ReleaseEventList.pm
-    version: 0.22
+    version: 0.91
+  WebService::MusicBrainz::Response::ReleaseGroup:
+    file: lib/WebService/MusicBrainz/Response/ReleaseGroup.pm
+    version: 0.91
+  WebService::MusicBrainz::Response::ReleaseGroupList:
+    file: lib/WebService/MusicBrainz/Response/ReleaseGroupList.pm
+    version: 0.91
   WebService::MusicBrainz::Response::ReleaseList:
     file: lib/WebService/MusicBrainz/Response/ReleaseList.pm
-    version: 0.22
+    version: 0.91
   WebService::MusicBrainz::Response::Tag:
     file: lib/WebService/MusicBrainz/Response/Tag.pm
-    version: 0.22
+    version: 0.91
   WebService::MusicBrainz::Response::TagList:
     file: lib/WebService/MusicBrainz/Response/TagList.pm
-    version: 0.22
+    version: 0.91
   WebService::MusicBrainz::Response::Track:
     file: lib/WebService/MusicBrainz/Response/Track.pm
-    version: 0.22
+    version: 0.91
   WebService::MusicBrainz::Response::TrackList:
     file: lib/WebService/MusicBrainz/Response/TrackList.pm
-    version: 0.22
+    version: 0.91
+  WebService::MusicBrainz::Response::UserRating:
+    file: lib/WebService/MusicBrainz/Response/UserRating.pm
+    version: 0.91
+  WebService::MusicBrainz::Response::UserTag:
+    file: lib/WebService/MusicBrainz/Response/UserTag.pm
+    version: 0.91
+  WebService::MusicBrainz::Response::UserTagList:
+    file: lib/WebService/MusicBrainz/Response/UserTagList.pm
+    version: 0.91
   WebService::MusicBrainz::Track:
     file: lib/WebService/MusicBrainz/Track.pm
-    version: 0.22
+    version: 0.91
 generated_by: Module::Build version 0.280801
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html
   version: 1.2
+keywords:
+  - musicbrainz
+  - webservice

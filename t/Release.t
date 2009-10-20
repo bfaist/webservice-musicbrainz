@@ -24,8 +24,6 @@ my $wsde_query = $wsde->query();
 
 ok( $wsde_query->{_baseurl} =~ m/de\.musicbrainz\.org/, 'create WebService::MusicBrainz::Release object/altername host' );
 
-my $ws = WebService::MusicBrainz::Release->new();
-
 my $rel_title = $ws->search({ TITLE => 'Van Halen' });
 ok($rel_title, 'release by title');
 my $rel_title_rel_list = $rel_title->release_list();
@@ -59,7 +57,7 @@ ok( $rel_discid_release->text_rep_script() eq "Latn", 'release by disc SCRIPT');
 ok( $rel_discid_release->artist()->name() eq "Van Halen", 'release by disc artist NAME');
 ok( $rel_discid_release->artist()->sort_name() eq "Van Halen", 'release by disc artist SORT NAME');
 foreach my $event (@{ $rel_discid_release->release_event_list()->events() }) {
-    if($event->catalog_number() eq "9362-47737-2") {
+    if($event->catalog_number() && $event->catalog_number() eq "9362-47737-2") {
        ok($event->date() eq "2000", 'rel disc rel eventlist event DATE');
        ok($event->country() eq "US", 'rel disc rel eventlist event COUNTRY');
        ok($event->barcode() eq "093624773726", 'rel disc rel eventlist event BARCODE');
@@ -163,7 +161,7 @@ foreach my $release (@{ $rel_date_response->release_list()->releases() }) {
         ok( $release->disc_list()->count() > 5, 'rel by date disc list COUNT');
         ok( $release->track_list()->count() > 8, 'rel by date track list COUNT');
         foreach my $event (@{ $release->release_event_list()->events() }) {
-            if($event->label() eq "Warner Music UK") {
+            if($event->label() && $event->label() eq "Warner Music UK") {
                 ok( $event->country() eq "GB", 'rel by date event COUNTRY');
                 ok( $event->date() eq "1980", 'rel by date event DATE');
                 last;
@@ -175,24 +173,23 @@ foreach my $release (@{ $rel_date_response->release_list()->releases() }) {
 
 sleep($sleep_duration);
 
-# TODO:  Not working.  MB bug?
-# my $rel_asin_response = $ws->search({ ARTIST => 'Van Halen', ASIN => "B000002LEM" });
-# ok( $rel_asin_response, 'rel by asin');
-# foreach my $release (@{ $rel_asin_response->release_list()->releases() }) {
-#     if($release->id() eq "006b0c0e-2e35-49a4-9c2f-68770c6c1bde") {
-#         ok($release->score() > 90, 'rel by asin SCORE');
-#         ok($release->type() eq "Album Official", 'rel by asin TYPE');
-#         ok($release->title() eq "OU812", 'rel by asin TITLE');
-#         ok($release->asin() eq "B000002LEM", 'rel by asin ASIN');
-#         ok( $release->text_rep_language() eq "ENG", 'rel by asin release LANG');
-#         ok( $release->text_rep_script() eq "Latn", 'rel by asin release SCRIPT');
-#         ok( $release->artist()->id() eq "b665b768-0d83-4363-950c-31ed39317c15", 'rel by asin release ARTIST');
-#         ok( $release->artist()->name() eq "Van Halen", 'rel by asin release artistid NAME');
-#         ok( $release->disc_list()->count() > 2, 'rel by asin disc list COUNT');
-#         ok( $release->track_list()->count() == 10, 'rel by asin track list COUNT');
-#         last;
-#     }
-# }
+my $rel_asin_response = $ws->search({ ARTIST => 'Van Halen', ASIN => "B000002LEM" });
+ok( $rel_asin_response, 'rel by asin');
+foreach my $release (@{ $rel_asin_response->release_list()->releases() }) {
+    if($release->id() eq "006b0c0e-2e35-49a4-9c2f-68770c6c1bde") {
+        ok($release->score() > 90, 'rel by asin SCORE');
+        ok($release->type() eq "Album Official", 'rel by asin TYPE');
+        ok($release->title() eq "OU812", 'rel by asin TITLE');
+        ok($release->asin() eq "B000002LEM", 'rel by asin ASIN');
+        ok( $release->text_rep_language() eq "ENG", 'rel by asin release LANG');
+        ok( $release->text_rep_script() eq "Latn", 'rel by asin release SCRIPT');
+        ok( $release->artist()->id() eq "b665b768-0d83-4363-950c-31ed39317c15", 'rel by asin release ARTIST');
+        ok( $release->artist()->name() eq "Van Halen", 'rel by asin release artistid NAME');
+        ok( $release->disc_list()->count() > 2, 'rel by asin disc list COUNT');
+        ok( $release->track_list()->count() == 10, 'rel by asin track list COUNT');
+        last;
+    }
+}
 
 # TODO:  Not working.  MB bug?
 # my $rel_lang_response = $ws->search({ ARTIST => 'Van Halen', LANG => "ENG" });

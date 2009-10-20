@@ -8,6 +8,7 @@ WriteMakefile
           'PREREQ_PM' => {
                            'Class::Accessor' => '0.30',
                            'LWP::UserAgent' => '2.0',
+                           'Test::More' => '0.88',
                            'URI' => '1.35',
                            'XML::LibXML' => '1.63'
                          },

@@ -3,7 +3,7 @@ package WebService::MusicBrainz::Response;
 use strict;
 use XML::LibXML;
 
-our $VERSION = '0.22';
+our $VERSION = '0.91';
 
 =head1 NAME
 
@@ -352,7 +352,7 @@ sub _create_artist_list {
    my $artist_list = WebService::MusicBrainz::Response::ArtistList->new();
 
    $artist_list->count( $xArtistList->getAttribute('count') ) if $xArtistList->getAttribute('count');
-   $artist_list->offset( $xArtistList->getAttribute('offset') ) if $xArtistList->getAttribute('offset');
+   $artist_list->offset( $xArtistList->getAttribute('offset') );
 
    my @artists;
 
@@ -506,7 +506,7 @@ sub _create_label_list {
    my $label_list = WebService::MusicBrainz::Response::LabelList->new();
 
    $label_list->count( $xLabelList->getAttribute('count') ) if $xLabelList->getAttribute('count');
-   $label_list->offset( $xLabelList->getAttribute('offset') ) if $xLabelList->getAttribute('offset');
+   $label_list->offset( $xLabelList->getAttribute('offset') );
    
    my @labels;
 
@@ -531,7 +531,7 @@ sub _create_track_list {
    my $track_list = WebService::MusicBrainz::Response::TrackList->new();
 
    $track_list->count( $xTrackList->getAttribute('count') ) if $xTrackList->getAttribute('count');
-   $track_list->offset( $xTrackList->getAttribute('offset') ) if $xTrackList->getAttribute('offset');
+   $track_list->offset( $xTrackList->getAttribute('offset') );
 
    my @tracks;
 
@@ -571,7 +571,7 @@ sub _create_alias_list {
    my $alias_list = WebService::MusicBrainz::Response::AliasList->new();
 
    $alias_list->count( $xAliasList->getAttribute('count') ) if $xAliasList->getAttribute('count');
-   $alias_list->offset( $xAliasList->getAttribute('offset') ) if $xAliasList->getAttribute('offset');
+   $alias_list->offset( $xAliasList->getAttribute('offset') );
 
    my @aliases;
 
@@ -641,7 +641,7 @@ sub _create_relation_list {
 
    $relation_list->target_type( $xRelationList->getAttribute('target-type') ) if $xRelationList->getAttribute('target-type');
    $relation_list->count( $xRelationList->getAttribute('count') ) if $xRelationList->getAttribute('count');
-   $relation_list->offset( $xRelationList->getAttribute('offset') ) if $xRelationList->getAttribute('offset');
+   $relation_list->offset( $xRelationList->getAttribute('offset') );
 
    my @relations;
 
@@ -689,7 +689,7 @@ sub _create_release_event_list {
    my $release_event_list = WebService::MusicBrainz::Response::ReleaseEventList->new();
 
    $release_event_list->count( $xReleaseEventList->getAttribute('count') ) if $xReleaseEventList->getAttribute('count');
-   $release_event_list->offset( $xReleaseEventList->getAttribute('offset') ) if $xReleaseEventList->getAttribute('offset');
+   $release_event_list->offset( $xReleaseEventList->getAttribute('offset') );
 
    my @events;
 
@@ -714,7 +714,7 @@ sub _create_release_list {
    my $release_list = WebService::MusicBrainz::Response::ReleaseList->new();
 
    $release_list->count( $xReleaseList->getAttribute('count') ) if $xReleaseList->getAttribute('count');
-   $release_list->offset( $xReleaseList->getAttribute('offset') ) if $xReleaseList->getAttribute('offset');
+   $release_list->offset( $xReleaseList->getAttribute('offset') );
 
    my @releases;
 
@@ -756,7 +756,7 @@ sub _create_disc_list {
    my @discs;
 
    $disc_list->count( $xDiscList->getAttribute('count') ) if $xDiscList->getAttribute('count');
-   $disc_list->offset( $xDiscList->getAttribute('offset') ) if $xDiscList->getAttribute('offset');
+   $disc_list->offset( $xDiscList->getAttribute('offset') );
 
    foreach my $xDisc ($xpc->findnodes('mmd:disc', $xDiscList)) {
       my $disc = $self->_create_disc( $xDisc );
@@ -792,7 +792,7 @@ sub _create_puid_list {
    my $puid_list = WebService::MusicBrainz::Response::PuidList->new();
 
    $puid_list->count( $xPuidList->getAttribute('count') ) if $xPuidList->getAttribute('count');
-   $puid_list->offset( $xPuidList->getAttribute('offset') ) if $xPuidList->getAttribute('offset');
+   $puid_list->offset( $xPuidList->getAttribute('offset') );
 
    my @puids;
 
@@ -832,7 +832,7 @@ sub _create_tag_list {
    my $tag_list = WebService::MusicBrainz::Response::TagList->new();
 
    $tag_list->count( $xTagList->getAttribute('count') ) if $xTagList->getAttribute('count');
-   $tag_list->offset( $xTagList->getAttribute('offset') ) if $xTagList->getAttribute('offset');
+   $tag_list->offset( $xTagList->getAttribute('offset') );
 
    my @tags;
 
@@ -870,7 +870,7 @@ sub _create_isrc_list {
    my $isrc_list = WebService::MusicBrainz::Response::ISRCList->new();
 
    $isrc_list->count( $xIsrcList->getAttribute('count') ) if $xIsrcList->getAttribute('count');
-   $isrc_list->offset( $xIsrcList->getAttribute('offset') ) if $xIsrcList->getAttribute('offset');
+   $isrc_list->offset( $xIsrcList->getAttribute('offset') );
 
    my @isrcs;
 
@@ -921,7 +921,7 @@ sub _create_release_group_list {
    my $rel_group_list = WebService::MusicBrainz::Response::ReleaseGroupList->new();
 
    $rel_group_list->count( $xReleaseGroupList->getAttribute('count') ) if $xReleaseGroupList->getAttribute('count');
-   $rel_group_list->offset( $xReleaseGroupList->getAttribute('offset') ) if $xReleaseGroupList->getAttribute('offset');
+   $rel_group_list->offset( $xReleaseGroupList->getAttribute('offset') );
    $rel_group_list->score( $xReleaseGroupList->getAttribute('ext:score') ) if $xReleaseGroupList->getAttribute('ext:score');
 
    my @rel_groups;

@@ -256,15 +256,15 @@ ok( $mbid_counts_artist, 'artist counts ARTIST');
 my $mbid_counts_rel_list = $mbid_counts_artist->release_list();
 ok( $mbid_counts_rel_list, 'artist counts artist RELEASE LIST');
 foreach my $release (@{ $mbid_counts_rel_list->releases() }) {
-    if($release->id() eq "a89e1d92-5381-4dab-ba51-733137d0e431") {
+    if($release->id() eq "fed37cfc-2a6d-4569-9ac0-501a7c7598eb") {
         ok( $release->type() eq "Album Official", 'artist counts release TYPE');
-        ok( $release->title() eq "Kill 'em All", 'artist counts release TITLE');
+        ok( $release->title() eq "Master of Puppets", 'artist counts release TITLE');
         ok( $release->text_rep_language() eq "ENG", 'artist counts release TEXT LANG');
         ok( $release->text_rep_script() eq "Latn", 'artist counts release TEXT SCRIPT');
-        # ok( $release->asin() eq "B00000B9AN", 'artist counts release ASIN');  # used to work
+        ok( $release->asin() eq "B000025ZVE", 'artist counts release ASIN');
         ok( $release->disc_list()->count() > 10, 'artist counts release DISC LIST COUNT');
-        ok( $release->track_list()->count() > 8, 'artist counts release TRACK LIST COUNT');
-        # ok( $release->release_event_list()->count() > 15, 'artist counts release event list COUNT');
+        ok( $release->track_list()->count() > 5, 'artist counts release TRACK LIST COUNT');
+        ok( $release->release_event_list()->count() > 10, 'artist counts release event list COUNT');
         last;
     }
 }
@@ -281,9 +281,8 @@ foreach my $release (@{ $mbid_rel_events_artist->release_list()->releases() }) {
         ok( $release->title() eq "Kill 'em All", 'artist rel events release TITLE');
         ok( $release->text_rep_language() eq "ENG", 'artist rel events release LANG');
         ok( $release->text_rep_script() eq "Latn", 'artist rel events release SCRIPT');
-        # ok( $release->asin() eq "B00000B9AN", 'artist rel events release ASIN');  # used to work
         foreach my $event (@{ $release->release_event_list()->events() }) {
-           if($event->barcode() eq "075596076623") {
+           if($event->barcode() && $event->barcode() eq "075596076623") {
                ok( $event->date() eq "1988-01-15", 'artist rel events release events DATE');
                ok( $event->country() eq "US", 'artist rel events release events COUNTRY');
                ok( $event->catalog_number() eq "CD 60766", 'artist rel events release events CATALOG NUMBER');
