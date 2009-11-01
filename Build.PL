@@ -14,7 +14,7 @@ my $build = Module::Build->new
                  },
      create_makefile_pl => 'traditional',
      dist_author => 'Bob Faist <bob.faist@gmail.com>',
-     dist_version => '0.91',
+     dist_version => '0.92',
      meta_merge => {
         resources => {
            repository => 'git://github.com/bfaist/webservice-musicbrainz.git'

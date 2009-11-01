@@ -115,3 +115,6 @@ Revision history for Perl extension WebService::MusicBrainz.
 0.91 Mon Oct 19th 2009
 	- RT Bug 50581 - Andreas Koenig
 		- Added prereq for Test::More 0.88
+
+0.92 Sat Nov 1st 2009
+	- Fixed failing test in Release.t

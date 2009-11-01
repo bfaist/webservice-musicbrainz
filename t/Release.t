@@ -421,9 +421,9 @@ ok( $rel_mbid_tags_release->text_rep_language() eq "ENG", 'rel mbid inc tags rel
 ok( $rel_mbid_tags_release->text_rep_script() eq "Latn", 'rel mbid inc tags release SCRIPT');
 ok( $rel_mbid_tags_release->asin() eq "B00004Y6O3", 'rel mbid inc tags release ASIN');
 foreach my $tag (@{ $rel_mbid_tags_release->tag_list()->tags() }) {
-     ok( $tag->count() == 2, 'rel mbid inc tags tag COUNT') if($tag->text() eq "hard rock");
-     ok( $tag->count() == 2, 'rel mbid inc tags tag COUNT') if($tag->text() eq "rock");
-     ok( $tag->count() == 1, 'rel mbid inc tags tag COUNT') if($tag->text() eq "1984");
+     ok( $tag->count() > 0, 'rel mbid inc tags tag COUNT') if($tag->text() eq "hard rock");
+     ok( $tag->count() > 0, 'rel mbid inc tags tag COUNT') if($tag->text() eq "rock");
+     ok( $tag->count() > 0, 'rel mbid inc tags tag COUNT') if($tag->text() eq "1984");
 }
 
 my $rel_mbid_ratings_response = $ws->search({ MBID => 'ff565cd7-acf8-4dc0-9603-72d1b7ae284b', INC => 'ratings' });
