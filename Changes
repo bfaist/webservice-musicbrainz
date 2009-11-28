@@ -118,3 +118,6 @@ Revision history for Perl extension WebService::MusicBrainz.
 
 0.92 Sat Nov 1st 2009
 	- Fixed failing test in Release.t
+
+0.93 Fri Nov 27th 2009
+	- Release event lists are now sorted from earliest to the most recent

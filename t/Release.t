@@ -40,8 +40,18 @@ foreach my $release (@{ $rel_title_rel_list->releases() }) {
         ok($release->artist()->name() eq "Van Halen", 'release by title rel artist NAME');
         ok($release->disc_list()->count() > 10, 'release by title rel disc list COUNT');
         ok($release->track_list()->count() > 10, 'release by title rel track list COUNT');
+        my $last_date = "0000-00-00";
+        my $sorted = 1;
         foreach my $event (@{ $release->release_event_list()->events() }) {
+            if($last_date le $event->date()) {
+                $sorted = 1;
+            } else {
+                $sorted = 0;
+                last;
+            }
+            $last_date = $event->date();
         }
+        ok($sorted == 1,'release by title sorted release events');
     }
 }
 

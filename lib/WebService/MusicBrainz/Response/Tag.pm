@@ -3,7 +3,7 @@ package WebService::MusicBrainz::Response::Tag;
 use strict;
 use base 'Class::Accessor';
 
-our $VERSION = '0.92';
+our $VERSION = '0.93';
 
 =head1 NAME
 

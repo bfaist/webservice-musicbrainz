@@ -3,7 +3,7 @@ package WebService::MusicBrainz::Response;
 use strict;
 use XML::LibXML;
 
-our $VERSION = '0.92';
+our $VERSION = '0.93';
 
 =head1 NAME
 
@@ -698,7 +698,10 @@ sub _create_release_event_list {
        push @events, $event;
    }
 
-   $release_event_list->events( \@events );
+   # should use a date object here but cheating with cmp to reduce dependencies for now...
+   my @sorted_events = sort { $a->date() cmp $b->date() } @events;
+
+   $release_event_list->events( \@sorted_events );
 
    return $release_event_list;
 }
