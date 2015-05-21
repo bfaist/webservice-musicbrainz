@@ -102,7 +102,7 @@ sub search {
    my $self = shift;
    my $params = shift;
 
-   my $response = $self->query()->get('releasegroup', $params);    
+   my $response = $self->query()->get('release-group', $params);    
 
    return $response;
 }
