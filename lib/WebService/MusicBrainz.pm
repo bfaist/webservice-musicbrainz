@@ -25,7 +25,7 @@ This module will act as a factory using static methods to return specific web se
 
 =head2 new_artist()
 
-Return new instance of WebService::MusicBrainz::Artist object.
+Return new instance of L<WebService::MusicBrainz::Artist> object.
 
 =cut
 
@@ -39,7 +39,7 @@ sub new_artist {
 
 =head2 new_track
 
-Return new instance of WebService::MusicBrainz::Track object.
+Return new instance of L<WebService::MusicBrainz::Track> object.
 
 =cut 
 
@@ -53,7 +53,7 @@ sub new_track {
 
 =head2 new_release
 
-Return new instance of WebService::MusicBrainz::Release object.
+Return new instance of L<WebService::MusicBrainz::Release> object.
 
 =cut 
 
@@ -65,9 +65,9 @@ sub new_release {
    return WebService::MusicBrainz::Release->new();
 }
 
-=head2 new_release
+=head2 new_label
 
-Return new instance of WebService::MusicBrainz::Label object.
+Return new instance of L<WebService::MusicBrainz::Label> object.
 
 =cut 
 
@@ -89,7 +89,7 @@ sub new_label {
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2006-2007 by Bob Faist
+Copyright 2006-2015 by Bob Faist
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
