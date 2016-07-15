@@ -2,6 +2,7 @@ package WebService::MusicBrainz::Query;
 
 use strict;
 use LWP::UserAgent;
+use LWP::Protocol::https;
 use URI;
 use URI::Escape;
 use WebService::MusicBrainz::Response;
