@@ -2,6 +2,7 @@ package WebService::MusicBrainz::Query;
 
 use strict;
 use LWP::UserAgent;
+use LWP::Protocol::https;
 use URI;
 use URI::Escape;
 use WebService::MusicBrainz::Response;
@@ -49,7 +50,7 @@ sub _init {
 
    my $web_service_uri = URI->new();
 
-   my $web_service_uri_scheme = "http";
+   my $web_service_uri_scheme = "https";
    my $web_service_host = $params{HOST} || 'musicbrainz.org';
    my $web_service_namespace = 'ws';
    my $web_service_version = '1';
