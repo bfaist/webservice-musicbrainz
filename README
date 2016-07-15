@@ -28,6 +28,7 @@ LWP::UserAgent
 Class::Accessor
 URI
 Test::More
+LWP::Protocol::https
 
 NOTE
 
