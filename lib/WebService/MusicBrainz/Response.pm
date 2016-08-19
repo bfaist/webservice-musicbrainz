@@ -699,9 +699,13 @@ sub _create_release_event_list {
    }
 
    # should use a date object here but cheating with cmp to reduce dependencies for now...
-   my @sorted_events = sort { $a->date() cmp $b->date() } @events;
+   if(scalar(@events) > 1) {
+       my @sorted_events = sort { $a->date() cmp $b->date() } @events;
 
-   $release_event_list->events( \@sorted_events );
+       $release_event_list->events( \@sorted_events );
+   } else {
+       $release_event_list->events( \@events );
+   }
 
    return $release_event_list;
 }
