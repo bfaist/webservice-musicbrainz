@@ -3,7 +3,7 @@ package WebService::MusicBrainz::ReleaseGroup;
 use strict;
 use WebService::MusicBrainz::Query;
 
-our $VERSION = '0.93';
+our $VERSION = '0.94';
 
 =head1 NAME
 

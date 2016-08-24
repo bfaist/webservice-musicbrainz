@@ -40,9 +40,10 @@ lib/WebService/MusicBrainz/Track.pm
 Makefile.PL
 MANIFEST			This list of files
 META.yml
-README
+README.md
 t/Artist.t
 t/Label.t
 t/Release.t
 t/ReleaseGroup.t
 t/Track.t
+META.json

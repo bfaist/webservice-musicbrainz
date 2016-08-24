@@ -2,3 +2,4 @@ MYMETA.*
 _build
 blib
 Build
+*.gz

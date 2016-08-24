@@ -3,7 +3,7 @@ package WebService::MusicBrainz::Response;
 use strict;
 use XML::LibXML;
 
-our $VERSION = '0.93';
+our $VERSION = '0.94';
 
 =head1 NAME
 
