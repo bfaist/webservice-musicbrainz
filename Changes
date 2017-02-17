@@ -124,3 +124,6 @@ Revision history for Perl extension WebService::MusicBrainz.
 
 0.94 Tuesday Auguest 2016
 	- Fixed tests
+
+1.0 Thursday February 2017
+	- Rewrite for version 2.0 of MusicBrainz API
