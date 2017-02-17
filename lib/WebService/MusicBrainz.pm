@@ -1,8 +1,78 @@
 package WebService::MusicBrainz;
 
 use strict;
+use Mojo::Base -base;
+use WebService::MusicBrainz::Request;
+use Data::Dumper;
 
-our $VERSION = '0.94';
+our $VERSION = '1.0';
+
+has valid_resources => sub { ['area','artist','event','instrument','label','recording','release','release_group','series','work','url'] };
+has request => sub { WebService::MusicBrainz::Request->new() };
+# inc subqueries
+has valid_artist_subqueries => sub { ['recordings','releases','release-groups','works' ] };
+has valid_label_subqueries => sub { [ 'releases' ] };
+has valid_recording_subqueries => sub { ['artist','releases' ] };
+has valid_release_subqueries => sub { ['artist','collections','labels','recordings','release-groups' ] };
+has valid_release_group_subqueries => sub { ['artist','releases' ] };
+
+sub search {
+    my $self = shift;
+    my $search_resource = shift;
+    my $search_query = shift;
+
+    my $request = WebService::MusicBrainz::Request->new();
+
+    if(!grep /^$search_resource$/, @{ $self->valid_resources() }) {
+        die "Not a valid resource for search ($search_resource)";
+    }
+
+    $self->request()->search_resource($search_resource);
+
+    if(exists $search_query->{mbid}) {
+        $self->request()->mbid($search_query->{mbid});
+    }
+
+    if(exists $search_query->{inc}) {
+        my @inc_subqueries;
+
+        if(ref($search_query->{inc}) eq 'ARRAY') {
+            foreach my $inc_item (@{ $search_query->{inc} }) {
+                push @inc_subqueries, $inc_item;
+            } 
+        } else {
+            push @inc_subqueries, $search_query->{inc};
+        }
+
+        $self->request()->inc(\@inc_subqueries);
+    }
+
+    my $request_json = $self->request()->result();
+
+    return $request_json; 
+}
+
+sub is_valid_subquery {
+    my $self = shift;
+    my $search_resource = shift;
+    my $search_subquery = shift;
+
+    my $valid_method = 'valid_' . $search_resource . '_subqueries';
+
+    my $valid_subquery_list = $self->$valid_method();
+
+    my $valid_subquery = 0;
+
+    if($valid_subquery_list && scalar(@{ $valid_subquery_list }) > 0) {
+        if(! grep /^$search_subquery$/, @{ $valid_subquery_list }) {
+             warn "Invalid subquery ($search_subquery) for the resource ($search_resource)";
+        } else {
+             $valid_subquery = 1;
+        }
+    }
+
+    return $valid_subquery;
+}
 
 =head1 NAME
 
@@ -12,72 +82,35 @@ WebService::MusicBrainz
 
     use WebService::MusicBrainz;
 
-    my $artist_ws = WebService::MusicBrainz->new_artist();
-    my $track_ws = WebService::MusicBrainz->new_track();
-    my $release_ws = WebService::MusicBrainz->new_release();
-    my $label_ws = WebService::MusicBrainz->new_label();
+    my $mb_ws = WebService::MusicBrainz->new();
+
+    my $area_result = $mb_ws->search(area => { x => 'y' });
+    my $artist_result = $mb_ws->search(artist => { x => 'Y' });
+    my $event_result = $mb_ws->search(event => { x => 'Y' });
+    my $instrument_result = $mb_ws->search(instrument => { x => 'Y' });
+    my $label_result = $mb_ws->search(label => { x => 'Y' });
+    my $recording_result = $mb_ws->search(recording => { x => 'Y' });
+    my $release_result = $mb_ws->search(release => { x => 'Y' });
+    my $release_group_result = $mb_ws->search(release_group => { x => 'Y' });
+    my $series_result = $mb_ws->search(series => { x => 'Y' });
+    my $work_result = $mb_ws->search(work => { x => 'Y' });
+    my $url_result = $mb_ws->search(url => { x => 'Y' });
 
 =head1 DESCRIPTION
 
-This module will act as a factory using static methods to return specific web service objects;
+API to search the musicbrainz.org database
 
 =head1 METHODS
 
-=head2 new_artist()
+=head2 new
 
-Return new instance of L<WebService::MusicBrainz::Artist> object.
+ my $mb = WebService::MusicBrainz->new();
 
-=cut
+=head2 search
 
-sub new_artist {
-   my $class = shift;
+ my $results = $mb->search($resource => { param1 => 'value1' });
 
-   require WebService::MusicBrainz::Artist;
-
-   return WebService::MusicBrainz::Artist->new();
-}
-
-=head2 new_track
-
-Return new instance of L<WebService::MusicBrainz::Track> object.
-
-=cut 
-
-sub new_track {
-   my $class = shift;
-
-   require WebService::MusicBrainz::Track;
-
-   return WebService::MusicBrainz::Track->new();
-}
-
-=head2 new_release
-
-Return new instance of L<WebService::MusicBrainz::Release> object.
-
-=cut 
-
-sub new_release {
-   my $class = shift;
-
-   require WebService::MusicBrainz::Release;
-
-   return WebService::MusicBrainz::Release->new();
-}
-
-=head2 new_label
-
-Return new instance of L<WebService::MusicBrainz::Label> object.
-
-=cut 
-
-sub new_label {
-   my $class = shift;
-
-   require WebService::MusicBrainz::Label;
-
-   return WebService::MusicBrainz::Label->new();
-}
+ Valid values for $resource are:  area, artist, event, instrument, label, recording, release, release-group, series, work, url
 
 =head1 AUTHOR
 
@@ -89,14 +122,14 @@ sub new_label {
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2006-2015 by Bob Faist
+Copyright 2006-2017 by Bob Faist
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-http://wiki.musicbrainz.org/XMLWebService
+http://musicbrainz.org/doc/Development/XML_Web_Service/Version_2
 
 =cut
 
