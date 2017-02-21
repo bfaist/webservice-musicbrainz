@@ -9,12 +9,45 @@ our $VERSION = '1.0';
 
 has valid_resources => sub { ['area','artist','event','instrument','label','recording','release','release_group','series','work','url'] };
 has request => sub { WebService::MusicBrainz::Request->new() };
+
 # inc subqueries
-has valid_artist_subqueries => sub { ['recordings','releases','release-groups','works' ] };
-has valid_label_subqueries => sub { [ 'releases' ] };
-has valid_recording_subqueries => sub { ['artist','releases' ] };
-has valid_release_subqueries => sub { ['artist','collections','labels','recordings','release-groups' ] };
-has valid_release_group_subqueries => sub { ['artist','releases' ] };
+has subquery_map => sub {
+    my %subquery_map;
+
+    $subquery_map{artist}        = ['recordings','releases','release-groups','works' ];
+    $subquery_map{label}         = ['releases'];
+    $subquery_map{recording}     = ['artist','releases'];
+    $subquery_map{release}       = ['artist','collections','labels','recordings','release-groups' ];
+    $subquery_map{release_group} = ['artist','releases'];
+
+    return \%subquery_map;
+};
+
+has is_valid_subquery => sub { 
+    my $self = shift;
+    my $resource = shift;
+    my $subquery_list = shift;
+
+    my $subquery_map = $self->subquery_map(); 
+
+    my $is_valid = 0;
+
+    if(exists $subquery_map->{$resource}) {
+        my $subquery_valid_count = 0;
+
+        foreach my $subquery (@$subquery_list) {
+            if(grep /^${subquery}$/, @{ $subquery_map->{$resource} }) {
+                $subquery_valid_count += 1;
+            }
+        }
+
+        if(scalar(@$subquery_list) == $subquery_valid_count) {
+            $is_valid = 1;
+        }
+    }
+
+    return $is_valid;
+};
 
 sub search {
     my $self = shift;
@@ -44,34 +77,17 @@ sub search {
             push @inc_subqueries, $search_query->{inc};
         }
 
-        $self->request()->inc(\@inc_subqueries);
+        if($self->is_valid_subquery($search_resource, \@inc_subqueries)) {
+            $self->request()->inc(\@inc_subqueries);
+        } else {
+            my $subquery_str = join ", ", @inc_subqueries;
+            die "Not a valid \"inc\" subquery ($subquery_str) for resource: $search_resource";
+        }
     }
 
     my $request_json = $self->request()->result();
 
     return $request_json; 
-}
-
-sub is_valid_subquery {
-    my $self = shift;
-    my $search_resource = shift;
-    my $search_subquery = shift;
-
-    my $valid_method = 'valid_' . $search_resource . '_subqueries';
-
-    my $valid_subquery_list = $self->$valid_method();
-
-    my $valid_subquery = 0;
-
-    if($valid_subquery_list && scalar(@{ $valid_subquery_list }) > 0) {
-        if(! grep /^$search_subquery$/, @{ $valid_subquery_list }) {
-             warn "Invalid subquery ($search_subquery) for the resource ($search_resource)";
-        } else {
-             $valid_subquery = 1;
-        }
-    }
-
-    return $valid_subquery;
 }
 
 =head1 NAME
