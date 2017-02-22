@@ -9,16 +9,20 @@ our $VERSION = '1.0';
 
 has valid_resources => sub { ['area','artist','event','instrument','label','recording','release','release_group','series','work','url'] };
 has request => sub { WebService::MusicBrainz::Request->new() };
+has relationships => sub {
+    my $rels = ['area-rels','artist-rels','event-rels','instrument-rels','label-rels','place-rels','recording-rels','release-rels','release-group-rels','series-rels','url-rels','work-rels'];
+    return $rels;
+};
 
 # inc subqueries
 has subquery_map => sub {
     my %subquery_map;
 
-    $subquery_map{artist}        = ['recordings','releases','release-groups','works' ];
+    $subquery_map{artist}        = ['recordings','releases','release-groups','works'];
     $subquery_map{label}         = ['releases'];
-    $subquery_map{recording}     = ['artist','releases'];
-    $subquery_map{release}       = ['artist','collections','labels','recordings','release-groups' ];
-    $subquery_map{release_group} = ['artist','releases'];
+    $subquery_map{recording}     = ['artists','releases'];
+    $subquery_map{release}       = ['artists','collections','labels','recordings','release-groups' ];
+    $subquery_map{release_group} = ['artists','releases'];
 
     return \%subquery_map;
 };
@@ -36,8 +40,9 @@ has is_valid_subquery => sub {
         my $subquery_valid_count = 0;
 
         foreach my $subquery (@$subquery_list) {
-            if(grep /^${subquery}$/, @{ $subquery_map->{$resource} }) {
-                $subquery_valid_count += 1;
+            if(grep /^${subquery}$/, @{ $subquery_map->{$resource} } ||
+               grep /^${subquery}$/, @{ $self->relationships() }) {
+                   $subquery_valid_count += 1;
             }
         }
 
