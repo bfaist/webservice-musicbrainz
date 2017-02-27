@@ -7,8 +7,8 @@ use Data::Dumper;
 
 our $VERSION = '1.0';
 
+has 'request';
 has valid_resources => sub { ['area','artist','event','instrument','label','recording','release','release_group','series','work','url'] };
-has request => sub { WebService::MusicBrainz::Request->new() };
 has relationships => sub {
     my $rels = ['area-rels','artist-rels','event-rels','instrument-rels','label-rels','place-rels','recording-rels','release-rels','release-group-rels','series-rels','url-rels','work-rels'];
     return $rels;
@@ -59,7 +59,7 @@ sub search {
     my $search_resource = shift;
     my $search_query = shift;
 
-    my $request = WebService::MusicBrainz::Request->new();
+    $self->request(WebService::MusicBrainz::Request->new());
 
     if(!grep /^$search_resource$/, @{ $self->valid_resources() }) {
         die "Not a valid resource for search ($search_resource)";
@@ -90,9 +90,13 @@ sub search {
         }
     }
 
-    my $request_json = $self->request()->result();
+    if(exists $search_query->{format}) {
+        $self->request()->format($search_query->{format});
+    }
 
-    return $request_json; 
+    my $request_result = $self->request()->result();
+
+    return $request_result; 
 }
 
 =head1 NAME

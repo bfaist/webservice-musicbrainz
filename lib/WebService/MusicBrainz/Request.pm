@@ -43,9 +43,19 @@ sub result {
 
     my $request_url = $self->make_url();
 
-    my $json_result = $self->ua->get($request_url => { 'Accept-Encoding' => 'application/json' })->result->json;
+    my $get_result = $self->ua->get($request_url => { 'Accept-Encoding' => 'application/json' })->result;
 
-    return $json_result;
+    my $result_formatted;
+
+    if($self->format eq 'json') {
+        $result_formatted = $get_result->json;
+    } elsif($self->format eq 'xml') {
+        $result_formatted = $get_result->dom;
+    } else {
+        warn "Unsupported format type : $self->format";
+    }
+
+    return $result_formatted;
 }
 
 =head1 NAME
