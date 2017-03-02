@@ -69,6 +69,7 @@ sub search {
 
     if(exists $search_query->{mbid}) {
         $self->request()->mbid($search_query->{mbid});
+        delete $search_query->{mbid};
     }
 
     if(exists $search_query->{inc}) {
@@ -88,11 +89,16 @@ sub search {
             my $subquery_str = join ", ", @inc_subqueries;
             die "Not a valid \"inc\" subquery ($subquery_str) for resource: $search_resource";
         }
+
+        delete $search_query->{inc};
     }
 
     if(exists $search_query->{format}) {
         $self->request()->format($search_query->{format});
+        delete $search_query->{format};
     }
+
+    $self->request->query_params($search_query);
 
     my $request_result = $self->request()->result();
 

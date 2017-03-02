@@ -1,9 +1,9 @@
 package WebService::MusicBrainz::Request;
 
-use strict;
 use Mojo::Base -base;
 use Mojo::UserAgent;
 use Mojo::URL;
+use Data::Dumper;
 
 has url_base => 'http://musicbrainz.org/ws/2';
 has ua => sub { Mojo::UserAgent->new() };
@@ -11,6 +11,8 @@ has 'format' => 'json';
 has 'search_resource';
 has 'mbid';
 has 'inc' => sub { [] };
+has 'query_params';
+has debug => sub { $ENV{MUSICBRAINZ_DEBUG} || 0 };;
 
 our $VERSION = '1.0';
 
@@ -32,6 +34,20 @@ sub make_url {
 
         $url_str .= '&inc=' . $inc_query;
     }
+
+    my @extra_params;
+
+    foreach my $key (keys %{ $self->query_params }) {
+        push @extra_params, $key . ':"' . $self->query_params->{$key} . '"';
+    }
+
+    if(scalar(@extra_params) > 0) {
+        my $extra_param_str = join ' AND ', @extra_params;
+
+        $url_str .= '&query=' . $extra_param_str; 
+    }
+
+    print "REQUEST URL: $url_str\n" if $self->debug();
 
     my $url = Mojo::URL->new($url_str);
 
