@@ -3,3 +3,7 @@ _build
 blib
 Build
 *.gz
+pm_to_blib
+*.bak
+*.old
+*.skip

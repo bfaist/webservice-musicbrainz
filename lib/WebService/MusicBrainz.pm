@@ -142,6 +142,19 @@ API to search the musicbrainz.org database
  my $results = $mb->search($resource => { param1 => 'value1' });
 
  Valid values for $resource are:  area, artist, event, instrument, label, recording, release, release-group, series, work, url
+The default is to return a decoded JSON as a perl data structure.  Specify format => 'xml' to return the results as an instance of Mojo::DOM.
+
+=head3 Search by MBID
+
+  my $result = $mb->search($resource => { mbid => 'xxxxxx' });
+
+=head3 Search area
+
+  my $areas = $mb->search(area => { area => 'cincinnati' });
+
+=head3 Search artist
+  
+ my $artists = $mb->search(artist => { name => 'Ryan Adams' }); 
 
 =head1 AUTHOR
 
