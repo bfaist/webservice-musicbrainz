@@ -37,6 +37,17 @@ ok($s6_res->{count} == 1);
 ok($s6_res->{artists}->[0]->{type} eq 'Group');
 ok($s6_res->{artists}->[0]->{id} eq 'b665b768-0d83-4363-950c-31ed39317c15');
 
+my $s7_res = $ws->search(artist => { artist => 'Ryan Adams', type => 'person' });
+ok($s7_res->{artists}->[0]->{'sort-name'} eq 'Adams, Ryan');
+
+my $s8_res = $ws->search(artist => { artist => 'red' });
+ok($s8_res->{count} >= 1700);
+ok($s8_res->{offset} == 0);
+
+my $s9_res = $ws->search(artist => { artist => 'red', offset => 30 });
+ok($s9_res->{count} >= 1700);
+ok($s9_res->{offset} == 30);
+
 # XML TESTS
 my $s1_dom = $ws->search(artist => { mbid => '070d193a-845c-479f-980e-bef15710653e', format => 'xml' });
 ok($s1_dom->at('sort-name')->text eq 'Prince');

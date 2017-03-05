@@ -18,4 +18,15 @@ ok($s2_res->{count} == 2);
 ok($s2_res->{areas}->[0]->{type} eq 'City');
 ok($s2_res->{areas}->[1]->{type} eq 'City');
 
+my $s3_res = $ws->search(area => { iso => 'US-OH' });
+ok($s3_res->{count} == 1);
+ok($s3_res->{areas}->[0]->{name} eq 'Ohio');
+
+eval { my $s4_res = $ws->search(area => { something => '99999' }) };
+if($@) { ok($@) }  # catch error
+
+my $s5_res = $ws->search(area => { iso => 'US-CA', format => 'xml' });
+ok($s5_res->find('name')->first->text eq 'California');
+ok($s5_res->at('area')->attr('ext:score') == 100);
+
 done_testing();

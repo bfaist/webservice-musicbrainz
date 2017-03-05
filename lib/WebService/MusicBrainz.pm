@@ -27,6 +27,20 @@ has subquery_map => sub {
     return \%subquery_map;
 };
 
+has search_fields_by_resource => sub {
+    my %search_fields;
+
+    $search_fields{area}          = ['aid','alias','area','begin','comment','end','ended','sortname','iso','iso1','iso2','iso3','type'];
+    $search_fields{artist}        = ['area','beginarea','endarea','arid','artist','artistaccent','alias','begin','comment','country','end','ended','gender','ipi','sortname','tag','type'];
+    $search_fields{label}         = ['alias','area','begin','code','comment','country','end','ended','ipi','label','labelaccent','laid','sortname','type','tag'];
+    $search_fields{recording}     = ['arid','artist','artistname','creditname','comment','country','date','dur','format','isrc','number','position','primarytype','puid','qdur','recording','recordingaccent','reid','release','rgid','rid','secondarytype','status','tid','trnum','tracks','tracksrelease','tag','type','video'];
+    $search_fields{release_group} = ['arid','artist','comment','creditname','primarytype','rgid','releasegroup','releasegroupaccent','releases','release','reid','secondarytype','status','tag','type'];
+    $search_fields{release}       = ['arid','artist','artistname','asin','barcode','catno','comment','country','creditname','date','discids','discidsmedium','format','laid','label','lang','mediums','primarytype','puid','quality','reid','release','releaseaccent','rgid','script','secondarytype','status','tag','tracks','tracksmedium','type'];
+    $search_fields{work}         = ['alias','arid','artist','comment','iswc','lang','tag','type','wid','work','workaccent'];
+
+    return \%search_fields;
+};
+
 has is_valid_subquery => sub { 
     my $self = shift;
     my $resource = shift;
@@ -98,6 +112,17 @@ sub search {
         delete $search_query->{format};
     }
 
+    if(exists $search_query->{offset}) {
+        $self->request()->offset($search_query->{offset});
+        delete $search_query->{offset};
+    }
+
+    foreach my $search_field (keys %{ $search_query }) {
+        if(! grep /^$search_field$/, @{ $self->search_fields_by_resource->{$search_resource} }) {
+             die "Not a valid search field ($search_field) for resource \"$search_resource\"";
+        }
+    }
+
     $self->request->query_params($search_query);
 
     my $request_result = $self->request()->result();
@@ -142,7 +167,7 @@ API to search the musicbrainz.org database
  my $results = $mb->search($resource => { param1 => 'value1' });
 
  Valid values for $resource are:  area, artist, event, instrument, label, recording, release, release-group, series, work, url
-The default is to return a decoded JSON as a perl data structure.  Specify format => 'xml' to return the results as an instance of Mojo::DOM.
+The default is to return decoded JSON as a perl data structure.  Specify format => 'xml' to return the results as an instance of Mojo::DOM.
 
 =head3 Search by MBID
 
@@ -151,10 +176,13 @@ The default is to return a decoded JSON as a perl data structure.  Specify forma
 =head3 Search area
 
   my $areas = $mb->search(area => { area => 'cincinnati' });
+  my $areas = $mb->search(area => { iso => 'US-OH' });
 
 =head3 Search artist
   
- my $artists = $mb->search(artist => { name => 'Ryan Adams' }); 
+ my $artists = $mb->search(artist => { artist => 'Ryan Adams', type => 'Person' }); 
+
+ my $artist_country = $artists->{artists}->[0]->{country};
 
 =head1 AUTHOR
 
