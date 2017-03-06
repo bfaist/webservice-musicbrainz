@@ -3,7 +3,7 @@ package WebService::MusicBrainz::Request;
 use Mojo::Base -base;
 use Mojo::UserAgent;
 use Mojo::URL;
-use Data::Dumper;
+use Mojo::Util qw/dumper/;
 
 has url_base => 'http://musicbrainz.org/ws/2';
 has ua => sub { Mojo::UserAgent->new() };
@@ -16,6 +16,8 @@ has offset => 0;
 has debug => sub { $ENV{MUSICBRAINZ_DEBUG} || 0 };;
 
 our $VERSION = '1.0';
+
+binmode STDOUT, ":encoding(UTF-8)";
 
 sub make_url {
     my $self = shift;
@@ -68,8 +70,10 @@ sub result {
 
     if($self->format eq 'json') {
         $result_formatted = $get_result->json;
+        print "JSON RESULT: ", dumper($get_result->json) if $self->debug;
     } elsif($self->format eq 'xml') {
         $result_formatted = $get_result->dom;
+        print "XML RESULT: ", $get_result->dom->to_string, "\n" if $self->debug;
     } else {
         warn "Unsupported format type : $self->format";
     }

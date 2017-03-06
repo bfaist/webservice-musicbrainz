@@ -107,9 +107,9 @@ sub search {
         delete $search_query->{inc};
     }
 
-    if(exists $search_query->{format}) {
-        $self->request()->format($search_query->{format});
-        delete $search_query->{format};
+    if(exists $search_query->{fmt}) {
+        $self->request()->format($search_query->{fmt});
+        delete $search_query->{fmt};
     }
 
     if(exists $search_query->{offset}) {
@@ -156,6 +156,10 @@ WebService::MusicBrainz
 
 API to search the musicbrainz.org database
 
+=head1 VERSION
+
+Version 1.0 and future releases are not backward compatible with pre-1.0 releases.  This is a complete re-write using version 2.0 of the MusicBrainz API and Mojolicious.
+
 =head1 METHODS
 
 =head2 new
@@ -180,9 +184,31 @@ The default is to return decoded JSON as a perl data structure.  Specify format 
 
 =head3 Search artist
   
+ # JSON example
  my $artists = $mb->search(artist => { artist => 'Ryan Adams', type => 'Person' }); 
 
  my $artist_country = $artists->{artists}->[0]->{country};
+
+ # XML example
+ my $artists = $mb->search(artist => { artist => 'Ryan Adams', type => 'Person', fmt => 'xml' }); 
+
+ my $artist_country = $artists->at('country')->text;
+
+=head1 DEBUG
+
+Set environment variable MUSICBRAINZ_DEBUG=1
+
+=over 1
+
+=item
+
+The URL that is generated for the search will output to STDOUT.
+
+=item
+
+The formatted output (JSON or XML) will be output to STDOUT
+
+=back
 
 =head1 AUTHOR
 
