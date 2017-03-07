@@ -26,4 +26,13 @@ ok($s3_res->{relations}->[0]->{type} eq 'amazon asin');
 ok($s3_res->{relations}->[0]->{direction} eq 'forward');
 sleep(1);
 
+my $s4_res = $ws->search(release => { release => 'Love Is Hell', country => 'US', status => 'official' });
+ok($s4_res->{count} > 5);
+
+for my $rel (@{ $s4_res->{releases} }) {
+   ok($rel->{status} eq 'Official');
+   ok($rel->{country} eq 'US');
+   sleep(1)
+}
+
 done_testing();

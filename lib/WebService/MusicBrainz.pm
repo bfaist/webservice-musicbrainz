@@ -194,6 +194,11 @@ The default is to return decoded JSON as a perl data structure.  Specify format 
 
  my $artist_country = $artists->at('country')->text;
 
+=head3 Search release
+
+ my $releases = $mb->search(release => { release => 'Love Is Hell', status => 'official' });
+ print "RELEASE COUNT: ", $releases->{count}, "\n";
+
 =head1 DEBUG
 
 Set environment variable MUSICBRAINZ_DEBUG=1

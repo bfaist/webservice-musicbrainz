@@ -3,7 +3,7 @@
    "author" : [
       "Bob Faist <bob.faist@gmail.com>"
    ],
-   "dynamic_config" : 0,
+   "dynamic_config" : 1,
    "generated_by" : "Module::Build version 0.422",
    "keywords" : [
       "musicbrainz",
@@ -18,6 +18,11 @@
    },
    "name" : "WebService-MusicBrainz",
    "prereqs" : {
+      "configure" : {
+         "requires" : {
+            "Module::Build" : "0.42"
+         }
+      },
       "runtime" : {
          "requires" : {
             "Mojolicious" : "7.0",
@@ -41,7 +46,6 @@
          "http://dev.perl.org/licenses/"
       ],
       "repository" : {
-         "type" : "git",
          "url" : "git://github.com/bfaist/webservice-musicbrainz.git"
       }
    },
