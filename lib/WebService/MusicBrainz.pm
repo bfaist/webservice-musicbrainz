@@ -84,27 +84,28 @@ sub search {
     if(exists $search_query->{mbid}) {
         $self->request()->mbid($search_query->{mbid});
         delete $search_query->{mbid};
-    }
 
-    if(exists $search_query->{inc}) {
-        my @inc_subqueries;
+        # only use "inc" parameters when a specific MBID is given
+        if(exists $search_query->{inc}) {
+            my @inc_subqueries;
 
-        if(ref($search_query->{inc}) eq 'ARRAY') {
-            foreach my $inc_item (@{ $search_query->{inc} }) {
-                push @inc_subqueries, $inc_item;
-            } 
-        } else {
-            push @inc_subqueries, $search_query->{inc};
+            if(ref($search_query->{inc}) eq 'ARRAY') {
+                foreach my $inc_item (@{ $search_query->{inc} }) {
+                     push @inc_subqueries, $inc_item;
+                }
+            } else {
+                push @inc_subqueries, $search_query->{inc};
+            }
+
+            if($self->is_valid_subquery($search_resource, \@inc_subqueries)) {
+                $self->request()->inc(\@inc_subqueries);
+            } else {
+                my $subquery_str = join ", ", @inc_subqueries;
+                die "Not a valid \"inc\" subquery ($subquery_str) for resource: $search_resource";
+            }
+
+            delete $search_query->{inc};
         }
-
-        if($self->is_valid_subquery($search_resource, \@inc_subqueries)) {
-            $self->request()->inc(\@inc_subqueries);
-        } else {
-            my $subquery_str = join ", ", @inc_subqueries;
-            die "Not a valid \"inc\" subquery ($subquery_str) for resource: $search_resource";
-        }
-
-        delete $search_query->{inc};
     }
 
     if(exists $search_query->{fmt}) {
