@@ -8,7 +8,7 @@ use Data::Dumper;
 our $VERSION = '1.0';
 
 has 'request';
-has valid_resources => sub { ['area','artist','event','instrument','label','recording','release','release_group','series','work','url'] };
+has valid_resources => sub { ['area','artist','label','recording','release','release_group'] };
 has relationships => sub {
     my $rels = ['area-rels','artist-rels','event-rels','instrument-rels','label-rels','place-rels','recording-rels','release-rels','release-group-rels','series-rels','url-rels','work-rels'];
     return $rels;
@@ -139,19 +139,12 @@ WebService::MusicBrainz
 
     use WebService::MusicBrainz;
 
-    my $mb_ws = WebService::MusicBrainz->new();
+    my $mb = WebService::MusicBrainz->new();
 
-    my $area_result = $mb_ws->search(area => { x => 'y' });
-    my $artist_result = $mb_ws->search(artist => { x => 'Y' });
-    my $event_result = $mb_ws->search(event => { x => 'Y' });
-    my $instrument_result = $mb_ws->search(instrument => { x => 'Y' });
-    my $label_result = $mb_ws->search(label => { x => 'Y' });
-    my $recording_result = $mb_ws->search(recording => { x => 'Y' });
-    my $release_result = $mb_ws->search(release => { x => 'Y' });
-    my $release_group_result = $mb_ws->search(release_group => { x => 'Y' });
-    my $series_result = $mb_ws->search(series => { x => 'Y' });
-    my $work_result = $mb_ws->search(work => { x => 'Y' });
-    my $url_result = $mb_ws->search(url => { x => 'Y' });
+    my $result = $mb->search($resource => { $search_key => 'search value' });
+    my $result = $mb->search($resource => { $search_key => 'search value', fmt => 'json' });  # fmt => 'json' is default
+
+    my $result_dom = $mb->search($resource => { $search_key => 'search value', fmt => 'xml' });
 
 =head1 DESCRIPTION
 
@@ -169,7 +162,11 @@ Version 1.0 and future releases are not backward compatible with pre-1.0 release
 
 =head2 search
 
- my $results = $mb->search($resource => { param1 => 'value1' });
+ my $result_list = $mb->search($resource => { param1 => 'value1' });
+
+ my $result = $mb->search($resource => { mbid => 'mbid' });
+
+ my $result_more = $mb->search($resource => { mbid => 'mbid', inc => 'extra stuff' });
 
  Valid values for $resource are:  area, artist, event, instrument, label, recording, release, release-group, series, work, url
 The default is to return decoded JSON as a perl data structure.  Specify format => 'xml' to return the results as an instance of Mojo::DOM.
@@ -178,22 +175,48 @@ The default is to return decoded JSON as a perl data structure.  Specify format 
 
   my $result = $mb->search($resource => { mbid => 'xxxxxx' });
 
+The "inc" search parameter is only allowed when searching for any particular "mbid".
+
 =head3 Search area
 
-  my $areas = $mb->search(area => { area => 'cincinnati' });
-  my $areas = $mb->search(area => { iso => 'US-OH' });
+  my $area_list_results = $mb_ws->search(area => { iso => 'US-OH' });
+  my $area_list_results = $mb_ws->search(area => { area => 'cincinnati' });
+  my $area_list_results = $mb_ws->search(area => { alias => 'new york' });
+  my $area_list_results = $mb_ws->search(area => { sortname => 'new york' });
+  my $area_list_results = $mb_ws->search(area => { area => 'new york', type => 'city' });
+
+  my $area_result = $mb_ws->search(area => { mbid => '0573177b-9ff9-4643-80bc-ed2513419267' });
+  my $area_result = $mb_ws->search(area => { mbid => '0573177b-9ff9-4643-80bc-ed2513419267', inc => 'area-rels' });
 
 =head3 Search artist
   
  # JSON example
- my $artists = $mb->search(artist => { artist => 'Ryan Adams', type => 'Person' }); 
+ my $artists = $mb->search(artist => { artist => 'Ryan Adams' }); 
+ my $artists = $mb->search(artist => { artist => 'Ryan Adams', type => 'person' }); 
 
  my $artist_country = $artists->{artists}->[0]->{country};
 
  # XML example
- my $artists = $mb->search(artist => { artist => 'Ryan Adams', type => 'Person', fmt => 'xml' }); 
+ my $artists = $mb->search(artist => { artist => 'Ryan Adams', type => 'person', fmt => 'xml' }); 
 
  my $artist_country = $artists->at('country')->text;
+
+ # find this particular artist
+ my $artist = $mb->search(artist => { mbid => '5c2d2520-950b-4c78-84fc-78a9328172a3' });
+
+ # find this particular artist and include release and artist relations (members of the band)
+ my $artist = $mb->search(artist => { mbid => '5c2d2520-950b-4c78-84fc-78a9328172a3', inc => ['releases','artist-rels'] });
+
+ # artists that started in Cincinnati
+ my $artists = $mb->search(artist => { beginarea => 'Cincinnati' }); 
+
+=head3 Search label
+
+ my $labels = $mb->search(label => { label => 'Death' });
+
+=head3 Search recording
+
+ my $recordings = $mb->search(recording => { artist => 'Taylor Swift' });
 
 =head3 Search release
 
