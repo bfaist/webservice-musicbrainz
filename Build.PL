@@ -6,11 +6,14 @@ my $build = Module::Build->new
      license  => 'perl',
      requires => {
                   'perl'          => '5.10.1',
-                  'Mojolicious'   => '7.0'
+                  'Mojolicious'   => '7.13'
                  },
+     configure_requires => {
+        'Module::Build' => '0.42'
+     },
      create_makefile_pl => 'traditional',
      dist_author => 'Bob Faist <bob.faist@gmail.com>',
-     dist_version => '1.0',
+     dist_version => '1.0.1',
      meta_merge => {
         resources => {
            repository => 'git://github.com/bfaist/webservice-musicbrainz.git'

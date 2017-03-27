@@ -4,12 +4,12 @@ use ExtUtils::MakeMaker;
 WriteMakefile
 (
   'PREREQ_PM' => {
-                   'Mojolicious' => '7.0'
+                   'Mojolicious' => '7.13'
                  },
-  'EXE_FILES' => [],
-  'INSTALLDIRS' => 'site',
-  'VERSION_FROM' => 'lib/WebService/MusicBrainz.pm',
   'PL_FILES' => {},
-  'NAME' => 'WebService::MusicBrainz'
+  'INSTALLDIRS' => 'site',
+  'EXE_FILES' => [],
+  'NAME' => 'WebService::MusicBrainz',
+  'VERSION_FROM' => 'lib/WebService/MusicBrainz.pm'
 )
 ;

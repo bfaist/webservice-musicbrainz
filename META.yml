@@ -18,15 +18,15 @@ name: WebService-MusicBrainz
 provides:
   WebService::MusicBrainz:
     file: lib/WebService/MusicBrainz.pm
-    version: '1.0'
+    version: v1.0.1
   WebService::MusicBrainz::Request:
     file: lib/WebService/MusicBrainz/Request.pm
     version: '1.0'
 requires:
-  Mojolicious: '7.0'
+  Mojolicious: '7.13'
   perl: v5.10.1
 resources:
   license: http://dev.perl.org/licenses/
   repository: git://github.com/bfaist/webservice-musicbrainz.git
-version: '1.0'
+version: v1.0.1
 x_serialization_backend: 'CPAN::Meta::YAML version 0.018'
