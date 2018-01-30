@@ -3,7 +3,6 @@ package WebService::MusicBrainz;
 use strict;
 use Mojo::Base -base;
 use WebService::MusicBrainz::Request;
-use Data::Dumper;
 
 our $VERSION = '1.0.3';
 
@@ -15,18 +14,16 @@ has relationships => sub {
 };
 
 # inc subqueries
-has subquery_map => sub {
-    my %subquery_map;
-
-    $subquery_map{artist}        = ['recordings','releases','release-groups','works'];
-    $subquery_map{discid}        = ['artists','artist-credits','collections','labels','recordings','release-groups' ];
-    $subquery_map{label}         = ['releases'];
-    $subquery_map{recording}     = ['artists','releases'];
-    $subquery_map{release}       = ['artists','collections','labels','recordings','release-groups' ];
-    $subquery_map{release_group} = ['artists','releases'];
-
-    return \%subquery_map;
-};
+our %subquery_map = (
+    _modifiers     => [qw(discids media isrcs artist-credits various-artists)],
+    _misc          => [qw(aliases annotation tags ratings user-tags user-ratings)],
+    artist        => [qw(recordings releases release-groups works) ],
+    discid        => [qw(artists artist-credits collections labels recordings release-groups)],
+    label         => [qw(releases)],
+    recording     => [qw(artists releases)],
+    release       => [qw(artists collections labels recordings release-groups)],
+    release_group => [qw(artists releases)],
+);
 
 has search_fields_by_resource => sub {
     my %search_fields;
@@ -50,10 +47,10 @@ sub is_valid_subquery {
 
     return unless($resource);
 
-    my $subquery_map = $self->subquery_map->{$resource}; 
-    return if(!$subquery_map);
+    my $resource_map = $subquery_map{$resource};
+    return if(!$resource_map);
 
-    my %valid_fields = map { $_ => 1 } (@$subquery_map, @{$self->relationships});
+    my %valid_fields = map { $_ => 1 } (@$resource_map, @{$subquery_map{_modifiers}}, @{$subquery_map{_misc}}, @{$self->relationships});
 
     foreach my $subquery (@$subqueries) {
       return if(!$valid_fields{$subquery});
@@ -118,7 +115,7 @@ sub search {
 
     my $request_result = $self->request()->result();
 
-    return $request_result; 
+    return $request_result;
 }
 
 =head1 NAME
@@ -179,15 +176,15 @@ The "inc" search parameter is only allowed when searching for any particular "mb
   my $area_result = $mb_ws->search(area => { mbid => '0573177b-9ff9-4643-80bc-ed2513419267', inc => 'area-rels' });
 
 =head3 Search artist
-  
+
  # JSON example
- my $artists = $mb->search(artist => { artist => 'Ryan Adams' }); 
- my $artists = $mb->search(artist => { artist => 'Ryan Adams', type => 'person' }); 
+ my $artists = $mb->search(artist => { artist => 'Ryan Adams' });
+ my $artists = $mb->search(artist => { artist => 'Ryan Adams', type => 'person' });
 
  my $artist_country = $artists->{artists}->[0]->{country};
 
  # XML example
- my $artists = $mb->search(artist => { artist => 'Ryan Adams', type => 'person', fmt => 'xml' }); 
+ my $artists = $mb->search(artist => { artist => 'Ryan Adams', type => 'person', fmt => 'xml' });
 
  my $artist_country = $artists->at('country')->text;
 
@@ -198,7 +195,7 @@ The "inc" search parameter is only allowed when searching for any particular "mb
  my $artist = $mb->search(artist => { mbid => '5c2d2520-950b-4c78-84fc-78a9328172a3', inc => ['releases','artist-rels'] });
 
  # artists that started in Cincinnati
- my $artists = $mb->search(artist => { beginarea => 'Cincinnati' }); 
+ my $artists = $mb->search(artist => { beginarea => 'Cincinnati' });
 
 =head3 Search label
 
