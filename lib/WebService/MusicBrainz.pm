@@ -43,31 +43,23 @@ has search_fields_by_resource => sub {
     return \%search_fields;
 };
 
-has is_valid_subquery => sub { 
+sub is_valid_subquery {
     my $self = shift;
     my $resource = shift;
-    my $subquery_list = shift;
+    my $subqueries = shift;
 
-    my $subquery_map = $self->subquery_map(); 
+    return unless($resource);
 
-    my $is_valid = 0;
+    my $subquery_map = $self->subquery_map->{$resource}; 
+    return if(!$subquery_map);
 
-    if(exists $subquery_map->{$resource}) {
-        my $subquery_valid_count = 0;
+    my %valid_fields = map { $_ => 1 } (@$subquery_map, @{$self->relationships});
 
-        foreach my $subquery (@$subquery_list) {
-            if(grep /^${subquery}$/, @{ $subquery_map->{$resource} } ||
-               grep /^${subquery}$/, @{ $self->relationships() }) {
-                   $subquery_valid_count += 1;
-            }
-        }
-
-        if(scalar(@$subquery_list) == $subquery_valid_count) {
-            $is_valid = 1;
-        }
+    foreach my $subquery (@$subqueries) {
+      return if(!$valid_fields{$subquery});
     }
 
-    return $is_valid;
+    return 1;
 };
 
 sub search {
@@ -93,28 +85,17 @@ sub search {
         delete $search_query->{discid};
     }
 
+    my $inc_subqueries = delete $search_query->{inc};
     # only use "inc" parameters when a specific MBID or DISCID is given
-    if ($self->request()->mbid() or $self->request()->discid()) {
-        if(exists $search_query->{inc}) {
-            my @inc_subqueries;
+    if ( ( $self->request()->mbid() or $self->request()->discid() ) and $inc_subqueries ) {
+      $inc_subqueries = [$inc_subqueries] if(!ref $inc_subqueries);
 
-            if(ref($search_query->{inc}) eq 'ARRAY') {
-                foreach my $inc_item (@{ $search_query->{inc} }) {
-                     push @inc_subqueries, $inc_item;
-                }
-            } else {
-                push @inc_subqueries, $search_query->{inc};
-            }
-
-            if($self->is_valid_subquery($search_resource, \@inc_subqueries)) {
-                $self->request()->inc(\@inc_subqueries);
-            } else {
-                my $subquery_str = join ", ", @inc_subqueries;
-                die "Not a valid \"inc\" subquery ($subquery_str) for resource: $search_resource";
-            }
-
-            delete $search_query->{inc};
-        }
+      if($self->is_valid_subquery($search_resource, $inc_subqueries)) {
+          $self->request()->inc($inc_subqueries);
+      } else {
+          my $subquery_str = join ", ", @$inc_subqueries;
+          die "Not a valid \"inc\" subquery ($subquery_str) for resource: $search_resource";
+      }
     }
 
     if(exists $search_query->{fmt}) {
