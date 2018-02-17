@@ -38,4 +38,11 @@ ok(defined @{$s2_res->{releases}}[0]->{'artist-credit'});
 ok(defined @{$s2_res->{releases}}[0]->{'artist-credit'}->[0]->{artist});
 ok(@{$s2_res->{releases}}[0]->{'artist-credit'}->[0]->{artist}->{'sort-name'} eq 'Adams, Ryan');
 
+my $s3_res = $ws->search(discid => { discid => 'bfpR1_IguRzV1SbnhoCxyQUkgkM-', inc => ['artist-credits','recordings'] });
+ok(@{$s3_res->{releases}} > 0);
+ok($s3_res->{releases}[0]->{'artist-credit'} != undef);
+ok(@{$s3_res->{releases}[0]->{'media'}} > 0);
+ok(@{$s3_res->{releases}[0]->{'media'}[0]->{'tracks'}} > 0);
+ok(defined $s3_res->{releases}[0]->{'media'}[0]->{'tracks'}[0]->{'recording'});
+
 done_testing();
