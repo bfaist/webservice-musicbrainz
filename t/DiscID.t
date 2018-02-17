@@ -32,7 +32,7 @@ ok(@{$s1_res->{releases}} > 0);
 ok(not defined @{$s1_res->{releases}}[0]->{'artist-credit'});
 sleep(1);
 
-my $s2_res = $ws->search(discid => { discid => 'NmFqfPXBZfk05ZpbTcL.IvmEtQY-', inc => ' artists' });
+my $s2_res = $ws->search(discid => { discid => 'NmFqfPXBZfk05ZpbTcL.IvmEtQY-', inc => 'artists' });
 ok(@{$s2_res->{releases}} > 0);
 ok(defined @{$s2_res->{releases}}[0]->{'artist-credit'});
 ok(defined @{$s2_res->{releases}}[0]->{'artist-credit'}->[0]->{artist});
