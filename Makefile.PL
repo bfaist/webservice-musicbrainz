@@ -3,13 +3,13 @@ require 5.010001;
 use ExtUtils::MakeMaker;
 WriteMakefile
 (
+  'VERSION_FROM' => 'lib/WebService/MusicBrainz.pm',
+  'INSTALLDIRS' => 'site',
   'NAME' => 'WebService::MusicBrainz',
   'PREREQ_PM' => {
                    'Mojolicious' => '7.13'
                  },
-  'INSTALLDIRS' => 'site',
-  'PL_FILES' => {},
   'EXE_FILES' => [],
-  'VERSION_FROM' => 'lib/WebService/MusicBrainz.pm'
+  'PL_FILES' => {}
 )
 ;
