@@ -289,7 +289,7 @@ it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-http://musicbrainz.org/doc/Development/XML_Web_Service/Version_2
+https://musicbrainz.org/doc/MusicBrainz_API
 
 =cut
 
