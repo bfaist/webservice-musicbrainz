@@ -22,7 +22,7 @@ has relationships => sub {
 has 'cache';
 has 'throttle';
 has 'uaid';
-
+has 'uaemail';
 
 # inc subqueries
 our %subquery_map = (
@@ -115,6 +115,14 @@ sub _search {
     my $search_resource = shift;
     my $search_query    = shift;
 
+    $self->request( WebService::MusicBrainz::Request->new(
+      cache => $self->cache,
+      throttle => $self->throttle,
+      uaid => $self->uaid,
+      uaemail => $self->uaemail,
+      v => $VERSION,
+    ));
+
     if ( !grep /^$search_resource$/, @{ $self->valid_resources() } ) {
         die "Not a valid resource for search ($search_resource)";
     }
@@ -159,48 +167,15 @@ sub _search {
             die "Not a valid search field ($search_field) for resource \"$search_resource\"";
         }
     }
-}
-
-sub search {
-    my $self            = shift;
-    my $search_resource = shift;
-    my $search_query    = shift;
-
-    # Normal search has no throttle, because it is not non-blocking and hence
-    # the API user should handle their own rate. 
-    $self->request( WebService::MusicBrainz::Request->new(
-      cache => $self->cache,
-      uaid => $self->uaid,
-      v => $VERSION,
-    ));
-
-    $self->_search($search_resource, $search_query);
 
     $self->request->query_params($search_query);
 
-    my $request_result = $self->request()->result();
-
-    return $request_result;
+    return $self;
 }
 
-sub search_p { 
-    my $self            = shift;
-    my $search_resource = shift;
-    my $search_query    = shift;
+sub search { return shift->_search(@_)->request()->result(); }
 
-    $self->request( WebService::MusicBrainz::Request->new(
-      cache => $self->cache,
-      throttle => $self->throttle,
-      uaid => $self->uaid,
-      v => $VERSION,
-    ));
-
-    $self->_search($search_resource, $search_query);
-
-    $self->request->query_params($search_query);
-
-    return $self->request()->result_p();
-}
+sub search_p { return shift->_search(@_)->request()->result_p(); }
 
 =head1 NAME
 
@@ -217,6 +192,18 @@ WebService::MusicBrainz
 
     my $result_dom = $mb->search($resource => { $search_key => 'search value', fmt => 'xml' });
 
+or for non blocking fans
+
+    my $mb->WebService::MusicBrainz->new( throttle => 1.65 );
+
+    $mb->search_p($resource => { $search_key => 'search value' })->then(sub {
+      my $result = shift:
+      # ...do something with result...
+    })->catch(sub {
+      my $error = shift;
+      # ...handle the string $error...
+    });
+
 =head1 DESCRIPTION
 
 API to search the musicbrainz.org database
@@ -224,6 +211,50 @@ API to search the musicbrainz.org database
 =head1 VERSION
 
 Version 1.0 and future releases are not backward compatible with pre-1.0 releases.  This is a complete re-write using version 2.0 of the MusicBrainz API and Mojolicious.
+
+=head1 ATTRIBUTES
+
+=head2 cache
+
+This feature presumes that hitting each unique URL (parameters and all)
+will return the exact same data. 
+
+If the cache attribute is set to a hash reference, then this hash reference
+serves as a cache for results based on the above idea. Thus, repeated searches
+with the same data will only ever hit the cache and never put strain on the
+API servers. 
+
+You may clear the cache at anytime by manipulating the hash reference or using
+the semantic
+
+  $mb->cache({});
+
+By default this is off.
+
+=head2 throttle
+
+This value is a floating number of seconds representing the maximum request rate; requests are 
+made no more frequently than this value. 
+
+The current MusicBrainz website says they will cut you off if you make any more than 1 request
+per second. In the spirit of that, this module will warn you if you set this to less than 1. 
+
+=head2 uaid
+=head2 uaemail.
+
+This is an attempt to be compliant with the MusicBrainz user agent semantic. 
+
+To be absolutely friendly (according to their website) you should set the
+'uaemail' attribute to your contact email address. This will set the UserAgent
+string on all requests to:
+
+  WebService::MusicBrainz/<version> { <your email }
+
+like they say the want. If you want to be less compliant, the 'uaid' is a freeform
+string you may set as the UserAgent string. 
+
+If neither of these are defined, the old behavior (Mojo::UserAgent's default) will
+be used. 
 
 =head1 METHODS
 
@@ -293,6 +324,13 @@ The "inc" search parameter is only allowed when searching for any particular "mb
 
  my $releases = $mb->search(release => { release => 'Love Is Hell', status => 'official' });
  print "RELEASE COUNT: ", $releases->{count}, "\n";
+
+=head2 search_p
+
+This works exactly like "search" except that it returns a promise
+(Mojo::Promise) instead of waiting for the request to return. This promise
+will settle after the request returns, which will resolve with what would have
+been returned to search(), and reject with an error string.
 
 =head1 DEBUG
 

@@ -1,9 +1,12 @@
 package WebService::MusicBrainz::Request;
 
 use Mojo::Base -base;
+use Mojo::IOLoop;
+use Mojo::Promise;
 use Mojo::UserAgent;
 use Mojo::URL;
 use Mojo::Util qw/dumper/;
+use Time::HiRes qw(gettimeofday tv_interval sleep);
 
 has url_base => 'https://musicbrainz.org/ws/2';
 has ua => sub { Mojo::UserAgent->new() };
@@ -20,7 +23,9 @@ has debug => sub { $ENV{MUSICBRAINZ_DEBUG} || 0 };;
 has 'cache';
 has 'throttle';
 has 'uaid';
+has 'uaemail';
 has 'v';
+has '_lastrequest' => sub { [0,0] };
 
 our $VERSION = '1.0';
 
@@ -67,30 +72,103 @@ sub make_url {
     return $url;
 }
 
+sub _ua_identify {
+    my $self = shift;
+
+    $self->ua->transactor->name("WebService::MusicBrainz/" . $self->v . ' { ' . $self->uaemail . '}')
+       if (defined($self->uaemail) && length($self->uaemail) > 0);
+
+    $self->ua->transactor->name($self->uaid) if (defined($self->uaid) && length($self->uaid) > 0);
+
+    return;
+}
+
+sub _format_result {
+  my ($self, $get_result) = (shift, shift);
+
+  my $result_formatted;
+  if($self->format eq 'json') {
+    $result_formatted = $get_result->json;
+    print "JSON RESULT: ", dumper($result_formatted) if $self->debug;
+  } elsif($self->format eq 'xml') {
+    $result_formatted = $get_result->dom;
+    print "XML RESULT: ", $result_formatted->to_string, "\n" if $self->debug;
+  } else {
+    warn "Unsupported format type : $self->format";
+  }
+  return $result_formatted;
+}
+
 sub result {
     my $self = shift;
 
-    if (defined($self->uaid) && length($self->uaid) > 0) {
-       $self->ua->transactor->name("WebService::MusicBrainz/" . $self->v . ' { ' . $self->uaid . '}');
-    }
+    $self->_ua_identify();
 
     my $request_url = $self->make_url();
 
-    my $get_result = $self->ua->get($request_url => { 'Accept-Encoding' => 'application/json' })->result;
+    my $cachehit = (ref($self->cache) eq 'HASH') ? $self->cache->{$request_url} : undef;
+    return $cachehit if (defined($cachehit));
 
-    my $result_formatted;
+    if (defined($self->throttle)) {
+      warn "Throttle rate of '" . $self->throttle . "' is too low, this risks getting access blocked\n"
+        if ($self->throttle < 1.0) ;
 
-    if($self->format eq 'json') {
-        $result_formatted = $get_result->json;
-        print "JSON RESULT: ", dumper($get_result->json) if $self->debug;
-    } elsif($self->format eq 'xml') {
-        $result_formatted = $get_result->dom;
-        print "XML RESULT: ", $get_result->dom->to_string, "\n" if $self->debug;
-    } else {
-        warn "Unsupported format type : $self->format";
+      my $reqrate = tv_interval($self->_lastrequest);
+      sleep( $self->throttle - $reqrate + 0.1) if ($self->_lastrequest->[0] != 0 && $reqrate < $self->throttle);
     }
 
-    return $result_formatted;
+    my $get_result = $self->ua->get($request_url => { 'Accept-Encoding' => 'application/json' })->result;
+    $self->_lastrequest([ gettimeofday ]);
+
+    $self->cache->{$request_url} = $get_result if (ref($self->cache) eq 'HASH');
+
+    return $self->_format_result($get_result);
+}
+
+sub result_p {
+    my $self = shift;
+
+    $self->_ua_identify();
+
+    my $request_url = $self->make_url();
+    my $cachehit = (ref($self->cache) eq 'HASH') ? $self->cache->{$request_url} : undef;
+    return Mojo::Promise->resolve($cachehit) if (defined($cachehit));
+
+    my $p = Mojo::Promise->new;
+    my $make_promise = sub {
+      return $self->ua->get_p($request_url => { 'Accept-Encoding' => 'application/json' });
+    };
+    my $resolve_promise = sub {
+      my $tx = shift;
+      my $result = $self->_format_result($tx->result);
+      $self->cache->{$request_url} = $result if (ref($self->cache) eq 'HASH');
+      $p->resolve($result);
+      return;
+    };
+    my $reject_promise = sub { $p->reject(@_);return; };
+     
+    if (defined($self->throttle)) {
+      warn "Throttle rate of '" . $self->throttle . "' is too low, this risks getting access blocked\n"
+        if ($self->throttle < 1.0) ;
+
+      my $reqrate = tv_interval($self->_lastrequest);
+      if ($self->_lastrequest->[0] != 0 && $reqrate < $self->throttle) {
+        my $runat = $self->throttle - $reqrate + 0.1;
+
+        Mojo::IOLoop->timer( $runat => sub {
+          $make_promise->()
+          ->then($resolve_promise)
+          ->catch($reject_promise);
+        });
+        return $p;
+      }  
+    }
+
+    $make_promise->()
+    ->then($resolve_promise)
+    ->catch($reject_promise);
+
+    return $p;
 }
 
 =head1 NAME
