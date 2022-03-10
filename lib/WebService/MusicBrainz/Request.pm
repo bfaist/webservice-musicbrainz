@@ -16,6 +16,12 @@ has 'query_params';
 has offset => 0;
 has debug => sub { $ENV{MUSICBRAINZ_DEBUG} || 0 };;
 
+# New features will not be used unless they are explicitly defined
+has 'cache';
+has 'throttle';
+has 'uaid';
+has 'v';
+
 our $VERSION = '1.0';
 
 binmode STDOUT, ":encoding(UTF-8)";
@@ -63,6 +69,10 @@ sub make_url {
 
 sub result {
     my $self = shift;
+
+    if (defined($self->uaid) && length($self->uaid) > 0) {
+       $self->ua->transactor->name("WebService::MusicBrainz/" . $self->v . ' { ' . $self->uaid . '}');
+    }
 
     my $request_url = $self->make_url();
 

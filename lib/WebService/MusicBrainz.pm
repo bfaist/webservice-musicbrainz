@@ -16,7 +16,13 @@ has relationships => sub {
         'release-group-rels', 'series-rels', 'url-rels',       'work-rels'
     ];
     return $rels;
-};
+  };
+
+# New features will not be used unless they are explicitly defined
+has 'cache';
+has 'throttle';
+has 'uaid';
+
 
 # inc subqueries
 our %subquery_map = (
@@ -104,13 +110,10 @@ sub is_valid_subquery {
 
     return 1;
 }
-
-sub search {
+sub _search {
     my $self            = shift;
     my $search_resource = shift;
     my $search_query    = shift;
-
-    $self->request( WebService::MusicBrainz::Request->new() );
 
     if ( !grep /^$search_resource$/, @{ $self->valid_resources() } ) {
         die "Not a valid resource for search ($search_resource)";
@@ -156,12 +159,47 @@ sub search {
             die "Not a valid search field ($search_field) for resource \"$search_resource\"";
         }
     }
+}
+
+sub search {
+    my $self            = shift;
+    my $search_resource = shift;
+    my $search_query    = shift;
+
+    # Normal search has no throttle, because it is not non-blocking and hence
+    # the API user should handle their own rate. 
+    $self->request( WebService::MusicBrainz::Request->new(
+      cache => $self->cache,
+      uaid => $self->uaid,
+      v => $VERSION,
+    ));
+
+    $self->_search($search_resource, $search_query);
 
     $self->request->query_params($search_query);
 
     my $request_result = $self->request()->result();
 
     return $request_result;
+}
+
+sub search_p { 
+    my $self            = shift;
+    my $search_resource = shift;
+    my $search_query    = shift;
+
+    $self->request( WebService::MusicBrainz::Request->new(
+      cache => $self->cache,
+      throttle => $self->throttle,
+      uaid => $self->uaid,
+      v => $VERSION,
+    ));
+
+    $self->_search($search_resource, $search_query);
+
+    $self->request->query_params($search_query);
+
+    return $self->request()->result_p();
 }
 
 =head1 NAME
