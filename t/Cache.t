@@ -12,8 +12,6 @@ sub fail_if_mb_busy {
    }
 }
 
-# In practice, the usage of cache like this will remove any upper level control of this
-# cache. Thankfully, this is just a test. :)
 my $ws = WebService::MusicBrainz->new( cache => {}, throttle => 1.1 );
 ok($ws);
 
