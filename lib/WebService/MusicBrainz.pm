@@ -250,8 +250,10 @@ string on all requests to:
 
   WebService::MusicBrainz/<version> { <your email }
 
-like they say the want. If you want to be less compliant, the 'uaid' is a freeform
-string you may set as the UserAgent string. 
+like they say the want. 
+
+If you want to name your application using this module, the 'uaid' is a freeform
+string which, if set, becomes the UserAgent string. 
 
 If neither of these are defined, the old behavior (Mojo::UserAgent's default) will
 be used. 

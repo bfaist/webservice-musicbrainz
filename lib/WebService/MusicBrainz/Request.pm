@@ -6,7 +6,7 @@ use Mojo::Promise;
 use Mojo::UserAgent;
 use Mojo::URL;
 use Mojo::Util qw/dumper/;
-use Time::HiRes qw(gettimeofday tv_interval sleep);
+use Time::HiRes qw(gettimeofday tv_interval sleep time);
 
 has url_base => 'https://musicbrainz.org/ws/2';
 has ua => sub { Mojo::UserAgent->new() };
@@ -25,7 +25,10 @@ has 'throttle';
 has 'uaid';
 has 'uaemail';
 has 'v';
-has '_lastrequest' => sub { [0,0] };
+
+# These have to be package scoped because this object is recreated each time.
+my $lastrequest = [0, 0];
+my @nbRequestQ = ();
 
 our $VERSION = '1.0';
 
@@ -113,16 +116,17 @@ sub result {
       warn "Throttle rate of '" . $self->throttle . "' is too low, this risks getting access blocked\n"
         if ($self->throttle < 1.0) ;
 
-      my $reqrate = tv_interval($self->_lastrequest);
-      sleep( $self->throttle - $reqrate + 0.1) if ($self->_lastrequest->[0] != 0 && $reqrate < $self->throttle);
+      my $reqrate = tv_interval($lastrequest);
+      sleep( $self->throttle - $reqrate + 0.1) if ($lastrequest->[0] != 0 && $reqrate < $self->throttle);
     }
 
     my $get_result = $self->ua->get($request_url => { 'Accept-Encoding' => 'application/json' })->result;
-    $self->_lastrequest([ gettimeofday ]);
+    $lastrequest = [ gettimeofday ];
 
-    $self->cache->{$request_url} = $get_result if (ref($self->cache) eq 'HASH');
+    my $result_formatted = $self->_format_result($get_result);
 
-    return $self->_format_result($get_result);
+    $self->cache->{$request_url} = $result_formatted if (ref($self->cache) eq 'HASH');
+    return $result_formatted;
 }
 
 sub result_p {
@@ -135,36 +139,52 @@ sub result_p {
     return Mojo::Promise->resolve($cachehit) if (defined($cachehit));
 
     my $p = Mojo::Promise->new;
-    my $make_promise = sub {
+    my $make_promise_request = sub {
+      print "## Request made at " . $nbRequestQ[$#nbRequestQ]."\n" if $self->debug;
       return $self->ua->get_p($request_url => { 'Accept-Encoding' => 'application/json' });
     };
     my $resolve_promise = sub {
       my $tx = shift;
       my $result = $self->_format_result($tx->result);
       $self->cache->{$request_url} = $result if (ref($self->cache) eq 'HASH');
+      pop(@nbRequestQ);
       $p->resolve($result);
       return;
     };
-    my $reject_promise = sub { $p->reject(@_);return; };
-     
+    my $reject_promise = sub {
+      pop(@nbRequestQ);
+      $p->reject(@_);
+      return;
+    };
+
+    # The request queue is an array of fractional time() values representing all the in-flight
+    # requests. Mojo::IOLoop->timer is used to delay requests until they are allowed to be sent
+    # per the throttle setting. Note well that even if throttle is not set, the request queue
+    # still exists, which can provide useful debugging information in non-blocking mode.
+    my $now = time();
     if (defined($self->throttle)) {
       warn "Throttle rate of '" . $self->throttle . "' is too low, this risks getting access blocked\n"
         if ($self->throttle < 1.0) ;
+      print "## Throttle code invoked\n" if $self->debug;
 
-      my $reqrate = tv_interval($self->_lastrequest);
-      if ($self->_lastrequest->[0] != 0 && $reqrate < $self->throttle) {
-        my $runat = $self->throttle - $reqrate + 0.1;
-
-        Mojo::IOLoop->timer( $runat => sub {
-          $make_promise->()
+      my $lastrequest = $nbRequestQ[$#nbRequestQ];
+      print "## Request Queue is currently [" . join(", ",@nbRequestQ) . "]\n" if $self->debug;
+      if (defined($lastrequest)) {
+        my $rundelay = ($lastrequest - $now) + $self->throttle + 0.1;
+        print "## Setting timer for $rundelay seconds \n" if ($self->debug);
+        push(@nbRequestQ, $now + $rundelay);
+        Mojo::IOLoop->timer( $rundelay => sub {
+          $make_promise_request->()
           ->then($resolve_promise)
           ->catch($reject_promise);
         });
         return $p;
-      }  
+      }
     }
 
-    $make_promise->()
+    print "## No last request, request Queue: " . join(", ",@nbRequestQ) . "\n" if $self->debug;
+    push(@nbRequestQ, time());
+    $make_promise_request->()
     ->then($resolve_promise)
     ->catch($reject_promise);
 
