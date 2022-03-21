@@ -34,6 +34,10 @@ our $VERSION = '1.0';
 
 binmode STDOUT, ":encoding(UTF-8)";
 
+my @not_in_query = (qw(
+  status type
+));
+
 sub make_url {
     my $self = shift;
 
@@ -48,7 +52,7 @@ sub make_url {
 
     $url_str .= '?fmt=' . $self->format;
 
-    if(scalar(@{ $self->inc }) > 0) {
+    if(scalar(@{ $self->inc }) > 0) { 
         my $inc_query = join '+', @{ $self->inc }; 
 
         $url_str .= '&inc=' . $inc_query;
@@ -57,7 +61,11 @@ sub make_url {
     my @extra_params;
 
     foreach my $key (keys %{ $self->query_params }) {
+      if (grep($_ eq $key, @not_in_query) > 0) {
+        $url_str .= '&' . $key . '=' . $self->query_params->{$key};
+      } else {
         push @extra_params, $key . ':"' . $self->query_params->{$key} . '"';
+      }
     }
 
     if(scalar(@extra_params) > 0) {

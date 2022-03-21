@@ -46,7 +46,7 @@ has search_fields_by_resource => sub {
     $search_fields{artist} = [
         'area',   'beginarea', 'endarea',  'arid',    'artist', 'artistaccent',
         'alias',  'begin',     'comment',  'country', 'end',    'ended',
-        'gender', 'ipi',       'sortname', 'tag',     'type'
+        'gender', 'ipi',       'sortname', 'status', 'tag',     'type'
     ];
     $search_fields{discid} = ['discid'];
     $search_fields{label}  = [
